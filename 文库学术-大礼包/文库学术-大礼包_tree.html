@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* 固定头部样式 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header .icon {
+            margin-right: 12px;
+            font-size: 24px;
+        }
+        
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            padding-top: 60px; /* 为固定头部留出空间 */
+        }
+        
+        .navigation-panel {
+            width: 300px;
+            flex-shrink: 0;
+            background: #f8f9fa;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            border-right: 1px solid #e9ecef;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+            height: calc(100vh - 60px);
+        }
+        
+        .navigation-panel h2 {
+            margin-top: 0;
+            color: #212529;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        #nav-search {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        
+        #nav-search:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .nav-tree ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        
+        .nav-tree li {
+            margin: 3px 0;
+        }
+        
+        .nav-tree li a {
+            text-decoration: none;
+            color: #495057;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-tree li a:hover {
+            background-color: #e9ecef;
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .nav-tree li.hidden {
+            display: none;
+        }
+        
+        .content-panel {
+            flex-grow: 1;
+            padding: 30px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            background-color: #ffffff;
+            height: calc(100vh - 60px);
+        }
+        
+        .content-panel h2, .content-panel h3, .content-panel h4, .content-panel h5, .content-panel h6 {
+            color: #212529;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .content-panel h2:first-child {
+            margin-top: 0;
+        }
+        
+        .content-panel ol {
+            margin-bottom: 25px;
+            padding-left: 20px;
+        }
+        
+        .content-panel li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .content-panel li a {
+            color: #007bff;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        
+        .content-panel li a:hover {
+            text-decoration: underline;
+        }
+        
+        #scrollToTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        
+        #scrollToTopBtn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 16px;
+            }
+            
+            .header .icon {
+                font-size: 20px;
+                margin-right: 8px;
+            }
+            
+            .container {
+                flex-direction: column;
+            }
+            
+            .navigation-panel {
+                width: 100%;
+                height: auto;
+                max-height: 40vh; /* Limit height on mobile */
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .content-panel {
+                padding: 20px;
+                height: auto;
+            }
+            
+            #scrollToTopBtn {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
+        
+        .navigation-panel::-webkit-scrollbar, .content-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .navigation-panel::-webkit-scrollbar-track, .content-panel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .navigation-panel::-webkit-scrollbar-thumb, .content-panel::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        .navigation-panel::-webkit-scrollbar-thumb:hover, .content-panel::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <!-- 固定头部 -->
+    <div class="header">
+        <h1>
+            <span class="icon">📚</span>
+            Bookmarks
+        </h1>
+    </div>
+    
+    <div class="container">
+        <div class="navigation-panel">
+            <h2>📚 目录导航</h2>
+            <input type="text" id="nav-search" placeholder="🔍 搜索导航...">
+            <div class="nav-tree">
+                <ul><li><a href="#收藏夹栏">收藏夹栏</a></li><li><a href="#文库学术">文库学术</a></li><li><a href="#文库下载">文库下载</a></li><li><a href="#文库站点">文库站点</a></li><li><a href="#公文素材">公文素材</a></li><li><a href="#ai论文">ai论文</a></li><li><a href="#学术搜索">学术搜索</a></li><li><a href="#scihub">scihub</a></li><li><a href="#国内搜索">国内搜索</a></li><li><a href="#国外搜索">国外搜索</a></li><li><a href="#聚合搜索">聚合搜索</a></li><li><a href="#引用查询">引用查询</a></li><li><a href="#期刊搜索">期刊搜索</a></li><li><a href="#互助平台">互助平台</a></li><li><a href="#论文查重">论文查重</a></li><li><a href="#免费查重">免费查重</a></li><li><a href="#辅助工具">辅助工具</a></li><li><a href="#谷歌学术">谷歌学术</a></li><li><a href="#维基百科">维基百科</a></li><li><a href="#专利查询">专利查询</a></li><li><a href="#标准规范">标准规范</a></li><li><a href="#行业报告">行业报告</a></li><li><a href="#免费行业报告">免费行业报告</a></li><li><a href="#短视频报告">短视频报告</a></li><li><a href="#世界数据">世界数据</a></li><li><a href="#参考站点">参考站点</a></li><li><a href="#报纸">报纸</a></li><li><a href="#手册">手册</a></li></ul>
+            </div>
+        </div>
+        <div class="content-panel">
+            <h2 id="收藏夹栏">收藏夹栏</h2><h2 id="文库学术">文库学术</h2><h2 id="文库下载">文库下载</h2><ol><li>乐学多思资料库：<a href="https://www.lexueduosi.com/#/" target="_blank">https://www.lexueduosi.com/#/</a></li><li>CSDN/筑龙网下载：<a href="https://ziquyun.com/main/freeDownload" target="_blank">https://ziquyun.com/main/freeDownload</a></li><li>资源下载：<a href="https://www.itadn.com/" target="_blank">https://www.itadn.com/</a></li><li>——————👆精选👆——————：<a href="https://separator.mayastudios.com/?vert" target="_blank">https://separator.mayastudios.com/?vert</a></li><li>systemmin/kill-doc: 看到经常有小伙伴们需要下载一些免费文档，但是相关网站浏览体验不好各种广告，各种登录验证，需要很多步骤才能下载文档，该脚本就是为了解决您的烦恼而诞生，尽可能做到自动化：<a href="https://github.com/systemmin/kill-doc" target="_blank">https://github.com/systemmin/kill-doc</a></li></ol><h2 id="文库站点">文库站点</h2><ol><li>腾讯文库 - 首页：<a href="https://wenku.docs.qq.com/" target="_blank">https://wenku.docs.qq.com/</a></li><li>——————👆精选👆——————：<a href="https://separator.mayastudios.com/" target="_blank">https://separator.mayastudios.com/</a></li><li>学习强国挑战答题_在线搜题答案查询：<a href="http://www.syiban.com/" target="_blank">http://www.syiban.com/</a></li><li>个人工作总结 _2020年终总结范文_周总结|月总结|季度总结范文：<a href="http://www.zhaozongjie.com/" target="_blank">http://www.zhaozongjie.com/</a></li><li>第一范文网：<a href="https://www.diyifanwen.com/" target="_blank">https://www.diyifanwen.com/</a></li><li>360doc个人图书馆：<a href="http://www.360doc.com/index.html" target="_blank">http://www.360doc.com/index.html</a></li><li>天天文库 - 一个分享有价值文档的网站：<a href="https://www.wenku365.com/" target="_blank">https://www.wenku365.com/</a></li><li>范文|范文大全|免费范文|学生论文-查字典范文网：<a href="https://fanwen.chazidian.com/" target="_blank">https://fanwen.chazidian.com/</a></li><li>道客巴巴-在线文档分享平台：<a href="https://www.doc88.com/" target="_blank">https://www.doc88.com/</a></li><li>纵横知道·文库-工程文件资料大全：<a href="https://zhzdwk.com/" target="_blank">https://zhzdwk.com/</a></li><li>全纪录 - 中国改革开放全纪录（1978-2018）_中国改革开放数据库：<a href="http://www.reformdata.org/records/" target="_blank">http://www.reformdata.org/records/</a></li><li>Docin.com豆丁网-分享文档 发现价值：<a href="https://www.docin.com/" target="_blank">https://www.docin.com/</a></li><li>MBA智库文档，专业的管理资源分享平台：<a href="https://doc.mbalib.com/" target="_blank">https://doc.mbalib.com/</a></li><li>瑞文网-经典美文-优美散文-励志正能量实用好文：<a href="http://www.ruiwen.com/" target="_blank">http://www.ruiwen.com/</a></li><li>清风知己：<a href="https://www.zhijidoc.com/" target="_blank">https://www.zhijidoc.com/</a></li><li>【发现报告】专业研报平台丨收录海量行业报告/券商研报丨免费分享行业研报：<a href="https://www.fxbaogao.com/?stop=1" target="_blank">https://www.fxbaogao.com/?stop=1</a></li><li>文档网_免费word文档在线阅读与下载中心：<a href="https://www.wendangwang.com/" target="_blank">https://www.wendangwang.com/</a></li><li>金锄头文库 - 上传文档赚钱的网站：<a href="https://www.jinchutou.com/" target="_blank">https://www.jinchutou.com/</a></li></ol><h2 id="公文素材">公文素材</h2><ol><li>无忧代笔网手机版：<a href="https://m.wydbw.com/index.asp" target="_blank">https://m.wydbw.com/index.asp</a></li><li>笔杆子办公—职场材料共享网站：<a href="http://www.biganzibangong.com/" target="_blank">http://www.biganzibangong.com/</a></li><li>【新提醒】【老秘网】 见证小秘书的成长,分享大手笔的范文！ - Powered by Discuz!：<a href="http://www.caiyes.cn/portal.php" target="_blank">http://www.caiyes.cn/portal.php</a></li><li>公文思享文库—体制写材料专用：<a href="http://www.gwsxwk.vip/" target="_blank">http://www.gwsxwk.vip/</a></li><li>公文写作论坛 - 公文写作网：<a href="https://www.gongwenxiezuo.com/" target="_blank">https://www.gongwenxiezuo.com/</a></li><li>笔杆儿网 - 笔杆子家园 - 写作门户网站 - 办公文档数据库：<a href="http://www.biganzijiayuan.com/home" target="_blank">http://www.biganzijiayuan.com/home</a></li><li>公文写作常用套路与词句分享 - 职场 - 虫部落：<a href="https://www.chongbuluo.com/thread-14326-1-1.html" target="_blank">https://www.chongbuluo.com/thread-14326-1-1.html</a></li><li>大智文秘网|提供文秘写作素材：<a href="https://www.gwy.work/" target="_blank">https://www.gwy.work/</a></li><li>智能公文系统-公文参考资料：<a href="https://zngw.cnki.net/" target="_blank">https://zngw.cnki.net/</a></li></ol><h2 id="ai论文">ai论文</h2><ol><li>AMiner - 探索科学与技术的动力：<a href="https://www.aminer.cn/" target="_blank">https://www.aminer.cn/</a></li><li>笔尖Ai写作-在线AI写作工具 - 笔尖Ai写作：<a href="https://www.bijianxiezuo.com/" target="_blank">https://www.bijianxiezuo.com/</a></li><li>dair-ai/ML-Papers-of-the-Week: 🔥Highlighting the top ML papers every week.：<a href="https://github.com/dair-ai/ML-Papers-of-the-Week" target="_blank">https://github.com/dair-ai/ML-Papers-of-the-Week</a></li><li>AIPaperPass写论文 - AI智能速写论文降重平台：<a href="https://www.aipaperpass.com/" target="_blank">https://www.aipaperpass.com/</a></li><li>ChatPaper：<a href="https://chatwithpaper.org/" target="_blank">https://chatwithpaper.org/</a></li><li>Consensus - Evidence-Based Answers, Faster：<a href="https://consensus.app/" target="_blank">https://consensus.app/</a></li><li>kaixindelele/ChatPaper：使用 ChatGPT 总结 arXiv 论文。 --- kaixindelele/ChatPaper：使用 ChatGPT 总结 arXiv 论文。 开心的乐乐/聊天纸：使用 ChatGPT 总结 arXiv 论文。：<a href="https://github.com/kaixindelele/ChatPaper" target="_blank">https://github.com/kaixindelele/ChatPaper</a></li><li>浏览最先进的机器学习 | 论文与代码：<a href="https://paperswithcode.com/sota" target="_blank">https://paperswithcode.com/sota</a></li></ol><h2 id="学术搜索">学术搜索</h2><h2 id="scihub">scihub</h2><ol><li>SCI-Hub论文下载可用网址链接（实时更新） - YoviSun工具集：<a href="https://tool.yovisun.com/scihub/" target="_blank">https://tool.yovisun.com/scihub/</a></li><li>Sci-Hub文献检索 | 科学是照亮世界的火把：<a href="https://sci-hub.org.cn/" target="_blank">https://sci-hub.org.cn/</a></li><li>sci-hub文献检索：<a href="https://gfsoso.99lb.net/sci-hub.html" target="_blank">https://gfsoso.99lb.net/sci-hub.html</a></li><li>Sci-Hub | Открытый доступ к научной информации | VK：<a href="https://vk.com/sci_hub" target="_blank">https://vk.com/sci_hub</a></li><li>sci hub 和 libgen 活动 url 列表 - Verts-Luisants：<a href="https://vertsluisants.fr/index.php?article4/where-scihub-libgen-server-down" target="_blank">https://vertsluisants.fr/index.php?article4/where-scihub-libgen-server-down</a></li><li>Sci-Hub: removing barriers in the way of science：<a href="https://sci-hub.ren/" target="_blank">https://sci-hub.ren/</a></li></ol><h2 id="国内搜索">国内搜索</h2><ol><li>免费论文下载中心：为您提供各行业论文下载：<a href="http://www.hi138.com/" target="_blank">http://www.hi138.com/</a></li><li>PubScholar公益学术平台：<a href="https://pubscholar.cn/" target="_blank">https://pubscholar.cn/</a></li><li>中国免费论文网 - 提供专业的毕业论文指导：<a href="https://www.lunwendata.com/" target="_blank">https://www.lunwendata.com/</a></li><li>云端学术资源-免费中文文献库，顶级论文数据库，每天同步更新：<a href="https://www.academic-res.com/" target="_blank">https://www.academic-res.com/</a></li><li>国家哲学社会科学学术期刊数据库：<a href="https://www.nssd.cn/" target="_blank">https://www.nssd.cn/</a></li><li>中国人民大学复印报刊资料-中国人民大学复印报刊资料：<a href="https://www.rdfybk.com/" target="_blank">https://www.rdfybk.com/</a></li></ol><h2 id="国外搜索">国外搜索</h2><ol><li>txyz.ai - Integrate all paths to knowledge：<a href="https://app.txyz.ai/" target="_blank">https://app.txyz.ai/</a></li><li>CORE – Aggregating the world’s open access research papers：<a href="https://core.ac.uk/" target="_blank">https://core.ac.uk/</a></li><li>Semantic Scholar | AI-Powered Research Tool：<a href="https://www.semanticscholar.org/" target="_blank">https://www.semanticscholar.org/</a></li><li>You are Crossref - Crossref：<a href="https://www.crossref.org/" target="_blank">https://www.crossref.org/</a></li><li>威利在线图书馆| 科学研究文章，期刊，书籍和参考书：<a href="https://onlinelibrary.wiley.com/" target="_blank">https://onlinelibrary.wiley.com/</a></li><li>机器学习的最新进展 | 论文与代码：<a href="https://paperswithcode.com/" target="_blank">https://paperswithcode.com/</a></li><li>CatalyzeX: machine intelligence to catalyze your projects：<a href="https://www.catalyzex.com/" target="_blank">https://www.catalyzex.com/</a></li><li>Bulletpapers - Understand complex papers in seconds：<a href="https://www.bulletpapers.ai/" target="_blank">https://www.bulletpapers.ai/</a></li><li>ScienceDirect.com | 科学，健康和医学期刊，全文文章和书籍。：<a href="https://www.sciencedirect.com/" target="_blank">https://www.sciencedirect.com/</a></li><li>SHARE：<a href="https://share.osf.io/" target="_blank">https://share.osf.io/</a></li><li>Zooniverse：<a href="https://www.zooniverse.org/" target="_blank">https://www.zooniverse.org/</a></li><li>Finding R&D Trends and Experts Made Simple | Scinapse：<a href="https://www.scinapse.io/" target="_blank">https://www.scinapse.io/</a></li><li>Open Knowledge Maps - Your guide to scientific knowledge：<a href="https://openknowledgemaps.org/" target="_blank">https://openknowledgemaps.org/</a></li><li>Alexandria Digital Research Library：<a href="https://www.alexandria.ucsb.edu/" target="_blank">https://www.alexandria.ucsb.edu/</a></li><li>RePEc: Research Papers in Economics：<a href="http://repec.org/" target="_blank">http://repec.org/</a></li><li>Browse by Subject - ALT Open Access Repository：<a href="https://repository.alt.ac.uk/view/subjects/" target="_blank">https://repository.alt.ac.uk/view/subjects/</a></li><li>Local Models Related Papers：<a href="https://rentry.org/LocalModelsPapers" target="_blank">https://rentry.org/LocalModelsPapers</a></li><li>Zenodo：<a href="https://zenodo.org/" target="_blank">https://zenodo.org/</a></li><li>thunlp/PromptPapers: Must-read papers on prompt-based tuning for pre-trained language models.：<a href="https://github.com/thunlp/PromptPapers" target="_blank">https://github.com/thunlp/PromptPapers</a></li><li>The Internet censorship bibliography：<a href="https://censorbib.nymity.ch/" target="_blank">https://censorbib.nymity.ch/</a></li></ol><h2 id="聚合搜索">聚合搜索</h2><ol><li>小鲸鱼文献,一站搞定文献下载！：<a href="http://www.9312.net/#/" target="_blank">http://www.9312.net/#/</a></li><li>sci-hub网址_sci-hub中国_文献小镇：<a href="http://www.sci-hub.ac.cn/" target="_blank">http://www.sci-hub.ac.cn/</a></li></ol><h2 id="引用查询">引用查询</h2><ol><li>OpenCitations - OpenCitations Corpus：<a href="https://opencitations.net/corpus" target="_blank">https://opencitations.net/corpus</a></li><li>Find free PDF of scientific publications --- 查找免费的科学出版物 PDF：<a href="https://www.freefullpdf.com/" target="_blank">https://www.freefullpdf.com/</a></li><li>PubMedPro - 可以显示IF影响因子的文献检索网站：<a href="https://www.pubmed.pro/home" target="_blank">https://www.pubmed.pro/home</a></li><li>paper ai 使用真实文献让AI完成论文：<a href="https://www.paperai.life/zh-CN" target="_blank">https://www.paperai.life/zh-CN</a></li></ol><h2 id="期刊搜索">期刊搜索</h2><ol><li>Directory of Open Access Journals – DOAJ：<a href="https://www.doaj.org/" target="_blank">https://www.doaj.org/</a></li><li>ACS Publications：<a href="https://pubs.acs.org/" target="_blank">https://pubs.acs.org/</a></li><li>Persée : Accéder à des milliers de publications scientifiques - Persée：<a href="https://www.persee.fr/" target="_blank">https://www.persee.fr/</a></li><li>PubMed：<a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank">https://pubmed.ncbi.nlm.nih.gov/</a></li><li>+Bioline International Official Site (site up-dated regularly)：<a href="https://www.bioline.org.br/" target="_blank">https://www.bioline.org.br/</a></li></ol><h2 id="互助平台">互助平台</h2><ol><li>文献互助平台 - 科研通(AbleSci.com)：<a href="https://www.ablesci.com/" target="_blank">https://www.ablesci.com/</a></li></ol><h2 id="论文查重">论文查重</h2><h2 id="免费查重">免费查重</h2><ol><li>免费论文查重_PaperAsk论文检测：<a href="https://www.paperask.com/" target="_blank">https://www.paperask.com/</a></li><li>WritePass官网_免费论文查重_论文检测系统：<a href="http://www.writepass.cn/" target="_blank">http://www.writepass.cn/</a></li><li>PaperDog论文查重官网_免费论文查重_格式排版_AI智能生成改写续写_智能降重：<a href="https://www.paperdog.net/" target="_blank">https://www.paperdog.net/</a></li><li>PaperFree官网-免费论文检测_免费论文查重_全球首个免费论文相似度检测系统：<a href="https://www.paperfree.cn/" target="_blank">https://www.paperfree.cn/</a></li><li>提交论文 - 百度学术：<a href="https://xueshu.baidu.com/usercenter/papercheck/?tag=check&upload=1&site=newala" target="_blank">https://xueshu.baidu.com/usercenter/papercheck/?tag=check&upload=1&site=newala</a></li><li>免费论文查重_PaperYY论文检测：<a href="https://www.paperyy.com/" target="_blank">https://www.paperyy.com/</a></li><li>登录 - 论文狗论文查重-AI降重服务平台：<a href="https://check.lunwengo.net/#/user/login?redirect=https%3A%2F%2Fcheck.lunwengo.net%2F%23%2Fcheck" target="_blank">https://check.lunwengo.net/#/user/login?redirect=https%3A%2F%2Fcheck.lunwengo.net%2F%23%2Fcheck</a></li><li>PaperTime论文时间-论文查重_免费论文检测_在线改重论文检测系统：<a href="http://www.papertime.cn/" target="_blank">http://www.papertime.cn/</a></li><li>PaperOK论文查重 - 专注免费论文查重，论文查重免费，不限类型：<a href="https://www.paperok.com/" target="_blank">https://www.paperok.com/</a></li><li>FreeCheck论文查重官网 - 精准的免费论文检测系统_24小时在线自助检测：<a href="https://www.freecheck.cn/" target="_blank">https://www.freecheck.cn/</a></li><li>PaperAA_论文查重_论文降重大师：<a href="http://www.paperaa.com/" target="_blank">http://www.paperaa.com/</a></li><li>本科PMLC大学生论文查重：<a href="http://cnki2.zyge.com.cn/index/index/pmlc.html" target="_blank">http://cnki2.zyge.com.cn/index/index/pmlc.html</a></li><li>G·格子达论文引用检测系统：<a href="http://www.gocheck.cn/" target="_blank">http://www.gocheck.cn/</a></li><li>写个论文 - 超好用的免费论文降重软件，让写论文更简单：<a href="https://www.xiegelunwen.com/" target="_blank">https://www.xiegelunwen.com/</a></li><li>论文狗论文查重_免费论文查重_论文查重免费入口_一键智能降重修改：<a href="https://www.lunwengo.net/" target="_blank">https://www.lunwengo.net/</a></li><li>论文查重_论文检测 | Plagiarisma：<a href="http://plagiarisma.net/cn/" target="_blank">http://plagiarisma.net/cn/</a></li><li>CNKI科研诚信管理系统研究中心：<a href="https://check.cnki.net/" target="_blank">https://check.cnki.net/</a></li><li>万方检测：<a href="http://check.wanfangdata.com.cn/" target="_blank">http://check.wanfangdata.com.cn/</a></li><li>PaperPaper论文查重 - 专业的论文查重、论文检测系统：<a href="http://paper.xunjiepdf.com/" target="_blank">http://paper.xunjiepdf.com/</a></li><li>PaperPass官网-论文查重-论文检测-免费论文查重检测系统：<a href="https://www.paperpass.com/" target="_blank">https://www.paperpass.com/</a></li><li>文章照妖镜：文章论文抄袭检测在线工具，可检测文章或论文是否抄袭，并统计句子抄袭程度。也可查看自己所创作博客文章被抄袭的程度，不限制使用次数。：<a href="http://www.zhongguosou.com/zonghe/fanchaoxi.html" target="_blank">http://www.zhongguosou.com/zonghe/fanchaoxi.html</a></li><li>CopyCheck-免费论文检测系统_文章抄袭检测_论文检测软件_论文查重：<a href="http://www.copycheck.com.cn/index.jsp" target="_blank">http://www.copycheck.com.cn/index.jsp</a></li><li>G·格子达论文引用检测系统：<a href="http://www.gocheck.cn/page/index.jsp" target="_blank">http://www.gocheck.cn/page/index.jsp</a></li><li>笔杆网_论文检测_论文查重_毕业论文抄袭检测：<a href="https://www.bigan.net/" target="_blank">https://www.bigan.net/</a></li><li>PaperAsk官网_全球首款一站式免费论文查重系统_可自动降低论文重复率软件：<a href="https://www.paperask.com/passport/login" target="_blank">https://www.paperask.com/passport/login</a></li><li>Copy++.exe - 蓝奏云：<a href="https://haosu.lanzoui.com/iqBeqolf2jg" target="_blank">https://haosu.lanzoui.com/iqBeqolf2jg</a></li><li>格子达论文检测系统：<a href="http://www.gezida.com/" target="_blank">http://www.gezida.com/</a></li><li>维普论文检测【官方网站】-论文查重，毕业论文抄袭检测，24小时自助检测-VPCS.CQVIP.COM：<a href="http://vpcs.cqvip.com/" target="_blank">http://vpcs.cqvip.com/</a></li><li>万方检测-个人文献版：<a href="https://jc.wanfangdata.com.cn/#/index" target="_blank">https://jc.wanfangdata.com.cn/#/index</a></li><li>论文查重软件免费版-论文检测系统免费查重网站-PaperDay官网：<a href="https://www.paperday.cn/" target="_blank">https://www.paperday.cn/</a></li><li>免费论文查重_PaperCcb查查呗论文检测：<a href="https://www.paperccb.com/" target="_blank">https://www.paperccb.com/</a></li><li>免费论文查重入口_PaperRed论文检测系统：<a href="https://www.paperred.com/" target="_blank">https://www.paperred.com/</a></li><li>Online Plagiarism Checking | PlagScan：<a href="https://www.plagscan.com/en/" target="_blank">https://www.plagscan.com/en/</a></li><li>PaperRight论文查重-论文检测软件，免费论文查重：<a href="http://www.paperright.com/" target="_blank">http://www.paperright.com/</a></li><li>Plagiarisma | Plagiarism Checker：<a href="http://plagiarisma.net/" target="_blank">http://plagiarisma.net/</a></li><li>防抄袭检测工具 | Copyscape：<a href="https://www.copyscape.com/" target="_blank">https://www.copyscape.com/</a></li><li>学信网 • 万方数据文献相似性检测服务系统：<a href="https://chsi.wanfangtech.net/" target="_blank">https://chsi.wanfangtech.net/</a></li><li>大雅相似度分析（论文检测、论文查重系统）：<a href="https://dsa.dayainfo.com/" target="_blank">https://dsa.dayainfo.com/</a></li><li>免费论文查重_PaperYY论文检测__PaperYY论文查重：<a href="https://www.paperyy.com/?scode=3be73618896cf3d302d4e5b9e370a9be" target="_blank">https://www.paperyy.com/?scode=3be73618896cf3d302d4e5b9e370a9be</a></li><li>“中国知网”学位论文管理系统：<a href="https://check.cnki.net/pmlc/" target="_blank">https://check.cnki.net/pmlc/</a></li></ol><h2 id="辅助工具">辅助工具</h2><ol><li>HATTER-LONG/Verbiverse: 利用 LLM 大模型辅助阅读 PDF 与观看视频，用以提升语言能力。：<a href="https://github.com/HATTER-LONG/Verbiverse" target="_blank">https://github.com/HATTER-LONG/Verbiverse</a></li><li>科研工具汇总：<a href="https://weak.notion.site/e9a3b1509fd14c928babb423956131d7" target="_blank">https://weak.notion.site/e9a3b1509fd14c928babb423956131d7</a></li><li>anarchysaiko/academicagentsV2：<a href="https://github.com/anarchysaiko/academicagentsV2" target="_blank">https://github.com/anarchysaiko/academicagentsV2</a></li><li>deep-diver/paper-reviewer: Generate a comprehensive review from an arXiv paper, then turn it into a blog post. This project powers the website below for the HuggingFace's Daily Papers (https://huggingface.co/papers).：<a href="https://github.com/deep-diver/paper-reviewer" target="_blank">https://github.com/deep-diver/paper-reviewer</a></li><li>帕佩尔利卜 --- Paperlib：<a href="https://paperlib.app/cn/" target="_blank">https://paperlib.app/cn/</a></li><li>一译：<a href="https://yiyibooks.cn/" target="_blank">https://yiyibooks.cn/</a></li><li>AI论文标题生成器 - 快速生成高质量研究标题：<a href="https://researchtitle.textgen.net/" target="_blank">https://researchtitle.textgen.net/</a></li><li>快论文 - 专业的论文写作排版神器：<a href="http://www.kuai65.com/" target="_blank">http://www.kuai65.com/</a></li><li>论文阅读-ReadPaper - 轻松读论文 | 专业翻译 | 一键引文 | 图表同屏：<a href="https://readpaper.com/new" target="_blank">https://readpaper.com/new</a></li><li>小绿鲸英文文献阅读器——专注提高SCI阅读效率：<a href="https://www.xljsci.com/" target="_blank">https://www.xljsci.com/</a></li><li>DeepDyve - Unlimited Access to Peer-Reviewed Journals：<a href="https://www.deepdyve.com/" target="_blank">https://www.deepdyve.com/</a></li><li>学术论文写作、论文编辑和研究帮助：<a href="https://essayforum.com/" target="_blank">https://essayforum.com/</a></li><li>搜索和写入：<a href="https://www.sokogskriv.no/" target="_blank">https://www.sokogskriv.no/</a></li><li>ai论文写作助手、论文生成器-笔灵AI写作：<a href="https://ibiling.cn/paper" target="_blank">https://ibiling.cn/paper</a></li><li>Future-House/paper-qa: High accuracy RAG for answering questions from scientific documents with citations：<a href="https://github.com/Future-House/paper-qa" target="_blank">https://github.com/Future-House/paper-qa</a></li></ol><h2 id="谷歌学术">谷歌学术</h2><ol><li>Google谷歌学术搜索镜像 - 小白工具箱：<a href="https://www.ooopn.com/tool/ggscholar/" target="_blank">https://www.ooopn.com/tool/ggscholar/</a></li><li>谷歌镜像1：<a href="https://ac.scmor.com/" target="_blank">https://ac.scmor.com/</a></li><li>谷歌学术-谷粉学术：<a href="https://gfsoso.99lb.net/scholar.html" target="_blank">https://gfsoso.99lb.net/scholar.html</a></li><li>谷粉学术：<a href="https://gfsoso.99lb.net/" target="_blank">https://gfsoso.99lb.net/</a></li></ol><h2 id="维基百科">维基百科</h2><ol><li>Index of /sites/download.kiwix.org/zim/wikipedia：<a href="https://www.mirrorservice.org/sites/download.kiwix.org/zim/wikipedia/?C=S;O=D" target="_blank">https://www.mirrorservice.org/sites/download.kiwix.org/zim/wikipedia/?C=S;O=D</a></li><li>chinapedia/ngx_proxy_wiki: Wikipedia Reverse Proxy：<a href="https://github.com/chinapedia/ngx_proxy_wiki" target="_blank">https://github.com/chinapedia/ngx_proxy_wiki</a></li><li>维基媒体下载：<a href="https://dumps.wikimedia.org/" target="_blank">https://dumps.wikimedia.org/</a></li><li>World Bank Open Data | Data：<a href="https://data.worldbank.org.cn/" target="_blank">https://data.worldbank.org.cn/</a></li><li>upstash/wikipedia-semantic-search: Semantic Search on Wikipedia with Upstash Vector：<a href="https://github.com/upstash/wikipedia-semantic-search" target="_blank">https://github.com/upstash/wikipedia-semantic-search</a></li></ol><h2 id="专利查询">专利查询</h2><ol><li>SooPAT 专利搜索：<a href="http://www.soopat.com/" target="_blank">http://www.soopat.com/</a></li><li>Patent Public Search | USPTO：<a href="https://ppubs.uspto.gov/pubwebapp/" target="_blank">https://ppubs.uspto.gov/pubwebapp/</a></li><li>Basic Search - Canadian Patents Database：<a href="https://www.ic.gc.ca/opic-cipo/cpd/eng/search/basic.html?wt_src=cipo-search-main" target="_blank">https://www.ic.gc.ca/opic-cipo/cpd/eng/search/basic.html?wt_src=cipo-search-main</a></li><li>中国专利公布公告：<a href="http://epub.cnipa.gov.cn/" target="_blank">http://epub.cnipa.gov.cn/</a></li><li>中国专利下载：<a href="https://www.drugfuture.com/cnpat/cn_patent.asp" target="_blank">https://www.drugfuture.com/cnpat/cn_patent.asp</a></li></ol><h2 id="标准规范">标准规范</h2><ol><li>国家标准全文公开：<a href="https://openstd.samr.gov.cn/bzgk/gb/index" target="_blank">https://openstd.samr.gov.cn/bzgk/gb/index</a></li><li>首页 - 全国标准信息公共服务平台：<a href="http://std.samr.gov.cn/" target="_blank">http://std.samr.gov.cn/</a></li><li>食品标准_食品伙伴网下载中心：<a href="http://down.foodmate.net/standard/index.html" target="_blank">http://down.foodmate.net/standard/index.html</a></li><li>标准_中华人民共和国生态环境部：<a href="http://www.mee.gov.cn/ywgz/fgbz/bz/" target="_blank">http://www.mee.gov.cn/ywgz/fgbz/bz/</a></li><li>国家标准全文公开：<a href="http://openstd.samr.gov.cn/bzgk/gb/" target="_blank">http://openstd.samr.gov.cn/bzgk/gb/</a></li><li>标准信息查询_中国政府网：<a href="http://www.gov.cn/fuwu/bzxxcx/bzh.htm" target="_blank">http://www.gov.cn/fuwu/bzxxcx/bzh.htm</a></li><li>国标电子书库-首页：<a href="https://ebook.chinabuilding.com.cn/zbooklib/index?SiteID=1" target="_blank">https://ebook.chinabuilding.com.cn/zbooklib/index?SiteID=1</a></li><li>中国标准信息服务网：<a href="https://www.sacinfo.cn/" target="_blank">https://www.sacinfo.cn/</a></li><li>国标(国家标准)下载网、国标站、国标查询－－国标久久 — 下载首页--(免费PDF格式标准下载)：<a href="http://gb99.cn/" target="_blank">http://gb99.cn/</a></li><li>中国标准服务网：<a href="http://www.cssn.net.cn/cssn/index" target="_blank">http://www.cssn.net.cn/cssn/index</a></li><li>查标准上工标网：<a href="http://www.csres.com/" target="_blank">http://www.csres.com/</a></li><li>Engineering360 - Industrial Products & Supplier Catalog Search：<a href="https://www.globalspec.com/" target="_blank">https://www.globalspec.com/</a></li><li>标准下载网 - 国家标准下载 - 各类行业标准下载：<a href="https://m.bzxz.net/bzxz/" target="_blank">https://m.bzxz.net/bzxz/</a></li><li>建标库 - 专注于建筑工程资源，超全规范标准、海量图纸模型等：<a href="http://www.jianbiaoku.com/" target="_blank">http://www.jianbiaoku.com/</a></li><li>标准网 - 免费标准分享、下载网站：<a href="https://bbs.biaozhuns.com/" target="_blank">https://bbs.biaozhuns.com/</a></li></ol><h2 id="行业报告">行业报告</h2><h2 id="免费行业报告">免费行业报告</h2><ol><li>每日报告：<a href="https://www.mrbaogao.com/" target="_blank">https://www.mrbaogao.com/</a></li><li>发现报告 - 专业研报平台丨收录海量行业报告、券商研报丨免费分享行业研报：<a href="https://www.fxbaogao.com/" target="_blank">https://www.fxbaogao.com/</a></li><li>研究报告 | 互联网数据资讯网-199IT | 中文互联网数据研究资讯中心-199IT：<a href="https://www.199it.com/archives/category/report" target="_blank">https://www.199it.com/archives/category/report</a></li><li>全部行业研究报告_报告合集_亿欧：<a href="https://www.iyiou.com/reportList" target="_blank">https://www.iyiou.com/reportList</a></li><li>【报告查一查】专业研报平台丨收录海量行业报告/券商研报丨免费分享行业研报：<a href="https://www.seedhangyan.com/" target="_blank">https://www.seedhangyan.com/</a></li><li>免费行业报告_免费研究报告-前沿知识库：<a href="https://wk.askci.com/" target="_blank">https://wk.askci.com/</a></li><li>免费研究报告_行业分析报告_免费市场调研报告 - 前瞻产业研究院：<a href="https://bg.qianzhan.com/report/free/" target="_blank">https://bg.qianzhan.com/report/free/</a></li><li>————————————：<a href="https://separator.mayastudios.com/?vert" target="_blank">https://separator.mayastudios.com/?vert</a></li><li>研报基地（行业报告免费分享）✨：<a href="https://www.yuque.com/link191/gqgidq" target="_blank">https://www.yuque.com/link191/gqgidq</a></li><li>📕 AI 研报资料库（PDF） - 飛書雲端文件：<a href="https://ki6j1b0d92h.feishu.cn/wiki/wikcnv3OOnfmvjKjVpPfmA85zib" target="_blank">https://ki6j1b0d92h.feishu.cn/wiki/wikcnv3OOnfmvjKjVpPfmA85zib</a></li><li>研报中心：<a href="https://data.eastmoney.com/report/" target="_blank">https://data.eastmoney.com/report/</a></li><li>manymore13/report: 研报，行业研报，研究报告，每天定时更新，可关注公众号查看研报：<a href="https://github.com/manymore13/report?tab=readme-ov-file" target="_blank">https://github.com/manymore13/report?tab=readme-ov-file</a></li></ol><h2 id="短视频报告">短视频报告</h2><ol><li>抖音电商官网-抖音小店入驻-兴趣电商直播带货平台：<a href="https://www.douyinec.com/research" target="_blank">https://www.douyinec.com/research</a></li><li>行业报告：<a href="https://www.relangdata.cn/report/index.html" target="_blank">https://www.relangdata.cn/report/index.html</a></li><li>算数报告-巨量算数：<a href="https://trendinsight.oceanengine.com/arithmetic-report" target="_blank">https://trendinsight.oceanengine.com/arithmetic-report</a></li><li>行业研究院-灰豚数据：<a href="https://www.huitun.com/report/" target="_blank">https://www.huitun.com/report/</a></li><li>万方数据知识服务平台：<a href="https://c.wanfangdata.com.cn/nstr" target="_blank">https://c.wanfangdata.com.cn/nstr</a></li><li>乐晴智库 | 深度行业研究：<a href="http://www.767stock.com/" target="_blank">http://www.767stock.com/</a></li><li>产业研究报告-艾瑞咨询：<a href="https://www.iresearch.com.cn/report.shtml" target="_blank">https://www.iresearch.com.cn/report.shtml</a></li><li>权威发布 | 中华全国商业信息中心：<a href="https://www.cncic.org/?cat=7" target="_blank">https://www.cncic.org/?cat=7</a></li><li>服务_中国政府网：<a href="http://www.gov.cn/fuwu/" target="_blank">http://www.gov.cn/fuwu/</a></li><li>行业统计：<a href="https://www.camet.org.cn/xytj" target="_blank">https://www.camet.org.cn/xytj</a></li><li>数据聚焦_中国政府网：<a href="http://www.gov.cn/shuju/chaxun/index.htm" target="_blank">http://www.gov.cn/shuju/chaxun/index.htm</a></li><li>Global consulting | Roland Berger：<a href="https://www.rolandberger.com/en/?country=CN" target="_blank">https://www.rolandberger.com/en/?country=CN</a></li><li>互联网数据资讯网-199IT：<a href="http://www.199it.com/" target="_blank">http://www.199it.com/</a></li><li>艾媒网-全球新经济行业数据分析报告发布平台：<a href="https://www.iimedia.cn/" target="_blank">https://www.iimedia.cn/</a></li><li>德勤：<a href="https://www2.deloitte.com/cn/zh.html" target="_blank">https://www2.deloitte.com/cn/zh.html</a></li><li>国金证券_让金融服务更高效、更可靠：<a href="http://www.gjzq.com.cn/main/invest-advisory/index.html" target="_blank">http://www.gjzq.com.cn/main/invest-advisory/index.html</a></li><li>首页：<a href="https://research.cicc.com/index" target="_blank">https://research.cicc.com/index</a></li><li>360营销学苑：<a href="http://yingxiao.360.cn/" target="_blank">http://yingxiao.360.cn/</a></li><li>亿欧EqualOcean-科技+产业+投资信息平台和智库：<a href="https://www.iyiou.com/" target="_blank">https://www.iyiou.com/</a></li><li>中国百货商业协会：<a href="http://www.ccagm.org.cn/" target="_blank">http://www.ccagm.org.cn/</a></li><li>联商网-零售商业门户网站, 专业服务零售连锁业、商业地产：<a href="http://www.linkshop.com/" target="_blank">http://www.linkshop.com/</a></li><li>中国连锁经营协会：<a href="http://www.ccfa.org.cn/portal/cn/index.jsp" target="_blank">http://www.ccfa.org.cn/portal/cn/index.jsp</a></li><li>投中研究院 | 投中网：<a href="https://www.chinaventure.com.cn/report/list.html" target="_blank">https://www.chinaventure.com.cn/report/list.html</a></li><li>巨潮资讯网：<a href="http://www.cninfo.com.cn/new/index" target="_blank">http://www.cninfo.com.cn/new/index</a></li><li>报告_艾瑞网：<a href="https://report.iresearch.cn/" target="_blank">https://report.iresearch.cn/</a></li><li>极光推送-领先的客户互动和营销科技服务商,助力企业运营、增长和变现：<a href="https://www.jiguang.cn/" target="_blank">https://www.jiguang.cn/</a></li></ol><h2 id="世界数据">世界数据</h2><ol><li>Data USA：<a href="https://datausa.io/" target="_blank">https://datausa.io/</a></li><li>OZYMANDIAS: POPULATION：<a href="https://population.ozymandias.so/" target="_blank">https://population.ozymandias.so/</a></li><li>Our World in Data：<a href="https://ourworldindata.org/" target="_blank">https://ourworldindata.org/</a></li><li>Soar | The New Atlas：<a href="https://soar.earth/" target="_blank">https://soar.earth/</a></li><li>Encyclopedia of the Nations - Information about countries of the world, United Nations, and World Leaders：<a href="https://www.nationsencyclopedia.com/" target="_blank">https://www.nationsencyclopedia.com/</a></li><li>If It Were My Home：<a href="https://www.ifitweremyhome.com/" target="_blank">https://www.ifitweremyhome.com/</a></li><li>globalEDGE: Your source for Global Business Knowledge：<a href="https://globaledge.msu.edu/" target="_blank">https://globaledge.msu.edu/</a></li><li>World Poverty Clock：<a href="https://worldpoverty.io/" target="_blank">https://worldpoverty.io/</a></li><li>Every Second：<a href="https://everysecond.io/" target="_blank">https://everysecond.io/</a></li><li>Internet Live Stats - Internet Usage & Social Media Statistics：<a href="https://www.internetlivestats.com/" target="_blank">https://www.internetlivestats.com/</a></li><li>UN Comtrade：<a href="https://comtradeplus.un.org/" target="_blank">https://comtradeplus.un.org/</a></li><li>Cost of Shutdown Tool：<a href="https://netblocks.org/cost/" target="_blank">https://netblocks.org/cost/</a></li><li>Visualizing World Birth and Death Rates：<a href="https://worldbirthsanddeaths.com/" target="_blank">https://worldbirthsanddeaths.com/</a></li><li>dataUNODC |：<a href="https://dataunodc.un.org/" target="_blank">https://dataunodc.un.org/</a></li><li>Incarceration in Real Numbers：<a href="https://mkorostoff.github.io/incarceration-in-real-numbers/" target="_blank">https://mkorostoff.github.io/incarceration-in-real-numbers/</a></li><li>Cost of Living Comparisons, 2024 data.：<a href="https://www.expatistan.com/cost-of-living" target="_blank">https://www.expatistan.com/cost-of-living</a></li><li>En-ROADS：<a href="https://en-roads.climateinteractive.org/scenario.html?v=24.3.0" target="_blank">https://en-roads.climateinteractive.org/scenario.html?v=24.3.0</a></li><li>Smithsonian Institution - Global Volcanism Program: Worldwide Holocene Volcano and Eruption Information：<a href="https://volcano.si.edu/" target="_blank">https://volcano.si.edu/</a></li><li>Everest - The eight-thousanders：<a href="https://www.martin-laxenaire.fr/experiments/8000ers/#/everest" target="_blank">https://www.martin-laxenaire.fr/experiments/8000ers/#/everest</a></li><li>Epidemic Calculator：<a href="https://gabgoh.github.io/COVID/index.html" target="_blank">https://gabgoh.github.io/COVID/index.html</a></li><li>DataBank | The World Bank：<a href="https://databank.worldbank.org/" target="_blank">https://databank.worldbank.org/</a></li><li>Worldometer - 实时世界统计：<a href="https://www.worldometers.info/" target="_blank">https://www.worldometers.info/</a></li></ol><h2 id="参考站点">参考站点</h2><ol><li>CDPedia：<a href="http://cdpedia.python.org.ar/index.en.es.html" target="_blank">http://cdpedia.python.org.ar/index.en.es.html</a></li><li>WikiNearby：<a href="https://wikinearby.toolforge.org/" target="_blank">https://wikinearby.toolforge.org/</a></li><li>韦氏词典：<a href="https://www.merriam-webster.com/" target="_blank">https://www.merriam-webster.com/</a></li><li>Sequence Publishing - Software and resources for English language learning and research：<a href="https://www.sequencepublishing.com/1/" target="_blank">https://www.sequencepublishing.com/1/</a></li><li>zortazert/rural-dictionary: We're rural, not urban. Urban Dictionary frontend developed in python Flask. - Codeberg.org：<a href="https://codeberg.org/zortazert/rural-dictionary/" target="_blank">https://codeberg.org/zortazert/rural-dictionary/</a></li><li>Slang.net - The Slang Dictionary：<a href="https://slang.net/" target="_blank">https://slang.net/</a></li><li>Phrases and Sayings, with meanings and origins explained.：<a href="https://www.phrases.org.uk/" target="_blank">https://www.phrases.org.uk/</a></li><li>Webopedia Homepage | Webopedia：<a href="https://www.webopedia.com/" target="_blank">https://www.webopedia.com/</a></li><li>TechTerms.com - The Computer Dictionary：<a href="https://techterms.com/" target="_blank">https://techterms.com/</a></li><li>The Phrontistery: Obscure Words and Vocabulary Resources：<a href="https://phrontistery.info/" target="_blank">https://phrontistery.info/</a></li><li>Etymology Dictionary：<a href="https://www.etymonline.com/" target="_blank">https://www.etymonline.com/</a></li><li>The Tower of Babel：<a href="https://starlingdb.org/" target="_blank">https://starlingdb.org/</a></li><li>LEXILOGOS Online dictionaries - Languages & Countries：<a href="https://www.lexilogos.com/english/index.htm" target="_blank">https://www.lexilogos.com/english/index.htm</a></li><li>Citizendium：<a href="https://citizendium.org/" target="_blank">https://citizendium.org/</a></li><li>Wikitia：<a href="https://wikitia.com/wiki/Main_Page" target="_blank">https://wikitia.com/wiki/Main_Page</a></li><li>Infoplease: An Online Encyclopedia, Almanac, Atlas, Biographies, Dictionary, and Thesaurus：<a href="https://www.infoplease.com/" target="_blank">https://www.infoplease.com/</a></li><li>Chat Word Dictionary - Chat Words, Texting Abbreviations, Emoticons, and their Meanings：<a href="https://chatworddictionary.com/" target="_blank">https://chatworddictionary.com/</a></li><li>Describing Words - Find Adjectives To Describe Things：<a href="https://describingwords.io/" target="_blank">https://describingwords.io/</a></li><li>Synonym.com：<a href="https://www.synonym.com/" target="_blank">https://www.synonym.com/</a></li><li>WikiDiff |：<a href="https://wikidiff.com/" target="_blank">https://wikidiff.com/</a></li><li>Does Not Translate - Words That Don't Translate：<a href="https://doesnottranslate.com/" target="_blank">https://doesnottranslate.com/</a></li><li>Eunoia: Words that Don't Translate：<a href="https://eunoia.world/" target="_blank">https://eunoia.world/</a></li><li>Tip of My Tongue - Chirag Mehta : chir.ag：<a href="https://chir.ag/projects/tip-of-my-tongue/" target="_blank">https://chir.ag/projects/tip-of-my-tongue/</a></li><li>Stanford Encyclopedia of Philosophy：<a href="https://plato.stanford.edu/index.html" target="_blank">https://plato.stanford.edu/index.html</a></li><li>Internet Encyclopedia of Philosophy | An encyclopedia of philosophy articles written by professional philosophers.：<a href="https://iep.utm.edu/" target="_blank">https://iep.utm.edu/</a></li><li>nLab：<a href="https://ncatlab.org/nlab/show/HomePage" target="_blank">https://ncatlab.org/nlab/show/HomePage</a></li><li>The Idioms | Largest Idiom Dictionary：<a href="https://www.theidioms.com/" target="_blank">https://www.theidioms.com/</a></li><li>The Devil's Dictionary, Online & Unabridged：<a href="https://www.thedevilsdictionary.com/" target="_blank">https://www.thedevilsdictionary.com/</a></li><li>Fallacies | Internet Encyclopedia of Philosophy：<a href="https://iep.utm.edu/fallacy/" target="_blank">https://iep.utm.edu/fallacy/</a></li><li>Time Traveler by Merriam-Webster: Search Words by First Known Use Date：<a href="https://www.merriam-webster.com/time-traveler/2022" target="_blank">https://www.merriam-webster.com/time-traveler/2022</a></li><li>Omniglot - the encyclopedia of writing systems and languages：<a href="https://www.omniglot.com/index.htm" target="_blank">https://www.omniglot.com/index.htm</a></li><li>The Piracy Glossary：<a href="https://rentry.org/The-Piracy-Glossary" target="_blank">https://rentry.org/The-Piracy-Glossary</a></li><li>Modern for Wikipedia：<a href="https://www.modernwiki.app/" target="_blank">https://www.modernwiki.app/</a></li><li>English Wikipedia Top 100：<a href="https://top.hatnote.com/" target="_blank">https://top.hatnote.com/</a></li><li>AI-Driven SaaS for Data Intelligence, Multimedia...：<a href="https://hyperleap.com/" target="_blank">https://hyperleap.com/</a></li><li>yashsinghcodes/wik: wik is use to get information about anything on the shell using Wikipedia.：<a href="https://github.com/yashsinghcodes/wik" target="_blank">https://github.com/yashsinghcodes/wik</a></li></ol><h2 id="报纸">报纸</h2><ol><li>Today's newspapers. Today's press covers. Kiosko.net：<a href="https://en.kiosko.net/" target="_blank">https://en.kiosko.net/</a></li><li>World Newspapers and Magazines on your Finger Tip | World-Newspapers.com：<a href="https://www.world-newspapers.com/" target="_blank">https://www.world-newspapers.com/</a></li><li>Online Newspapers - Global list of online newspapers：<a href="https://www.newspaperindex.com/" target="_blank">https://www.newspaperindex.com/</a></li><li>Paperboy Online Newspapers | US & World Newspapers：<a href="https://www.thepaperboy.com/" target="_blank">https://www.thepaperboy.com/</a></li><li>Today's Front Pages | Newspaper Headlines：<a href="https://www.frontpages.com/" target="_blank">https://www.frontpages.com/</a></li><li>Newspaper Map：<a href="https://newspapermap.com/" target="_blank">https://newspapermap.com/</a></li><li>Books > Newspapers - SoftArchive：<a href="https://sanet.st/newspapers/" target="_blank">https://sanet.st/newspapers/</a></li><li>Meta-Press.es：<a href="https://www.meta-press.es/" target="_blank">https://www.meta-press.es/</a></li><li>Газеты на английском/Newspapers English / FR /DE | VK：<a href="https://vk.com/engnewspapers" target="_blank">https://vk.com/engnewspapers</a></li><li>Magazines & Newspapers | Mobilism：<a href="https://forum.mobilism.org/viewforum.php?f=123" target="_blank">https://forum.mobilism.org/viewforum.php?f=123</a></li><li>Projects – Veridian：<a href="https://veridiansoftware.com/collections/" target="_blank">https://veridiansoftware.com/collections/</a></li></ol><h2 id="手册">手册</h2><ol><li>手册、规格和下载项目 - 官方 Apple 支持 (中国)：<a href="https://support.apple.com/zh-cn/docs" target="_blank">https://support.apple.com/zh-cn/docs</a></li><li>Manualsnet - Search the largest library of manuals on the net!：<a href="https://manualsnet.com/" target="_blank">https://manualsnet.com/</a></li><li>ManualsLib - Makes it easy to find manuals online!：<a href="https://www.manualslib.com/" target="_blank">https://www.manualslib.com/</a></li><li>Man Pages Archive - manned.org：<a href="https://manned.org/" target="_blank">https://manned.org/</a></li><li>Manualzz - owner guides and user manuals：<a href="https://manualzz.com/" target="_blank">https://manualzz.com/</a></li><li>Free Car Service Manuals from Operation CHARM — No strings attached!：<a href="https://charm.li/" target="_blank">https://charm.li/</a></li><li>43 Renault PDF Manuals Download for Free! - Сar PDF Manual, Wiring Diagram, Fault Codes：<a href="https://www.carpdfmanual.com/renault/" target="_blank">https://www.carpdfmanual.com/renault/</a></li><li>Index of /：<a href="https://www.premierproducts-uk.co.uk/" target="_blank">https://www.premierproducts-uk.co.uk/</a></li><li>Index of /Manuals：<a href="https://neurophysics.ucsd.edu/Manuals/" target="_blank">https://neurophysics.ucsd.edu/Manuals/</a></li><li>Building Instructions - Customer Service - LEGO.com US：<a href="https://www.lego.com/en-us/service/buildinginstructions?locale=en-us&consent-modal=show&age-gate=grown_up" target="_blank">https://www.lego.com/en-us/service/buildinginstructions?locale=en-us&consent-modal=show&age-gate=grown_up</a></li><li>MANUZOID：<a href="https://manuzoid.com/" target="_blank">https://manuzoid.com/</a></li></ol>
+        </div>
+    </div>
+    <button onclick="scrollToTop()" id="scrollToTopBtn" title="回到顶部">⬆️</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const navSearch = document.getElementById("nav-search");
+            const navTree = document.querySelector(".nav-tree");
+            const navLinks = navTree.querySelectorAll("a");
+            const contentPanel = document.querySelector(".content-panel");
+            const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+
+            // 搜索功能
+            navSearch.addEventListener("keyup", function() {
+                const searchTerm = navSearch.value.toLowerCase().trim();
+
+                // Show all if search term is empty
+                if (searchTerm === "") {
+                    navTree.querySelectorAll("li").forEach(li => li.classList.remove("hidden"));
+                    return;
+                }
+
+                // Hide all initially
+                navTree.querySelectorAll("li").forEach(li => li.classList.add("hidden"));
+
+                navLinks.forEach(link => {
+                    const text = link.textContent.toLowerCase();
+                    const listItem = link.closest("li");
+
+                    if (text.includes(searchTerm)) {
+                        listItem.classList.remove("hidden");
+                        // Show parent categories as well (not strictly needed with simplified menu, but good for robustness)
+                        let parent = listItem.parentElement.closest("li");
+                        while(parent) {
+                            parent.classList.remove("hidden");
+                            parent = parent.parentElement.closest("li");
+                        }
+                    }
+                });
+            });
+
+            // 平滑滚动导航
+            navLinks.forEach(link => {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute("href").substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        contentPanel.scrollTo({
+                            top: targetElement.offsetTop - contentPanel.offsetTop, 
+                            behavior: "smooth"
+                        });
+                        
+                        // 高亮当前选中的导航项
+                        navLinks.forEach(l => {
+                            l.style.backgroundColor = "";
+                            l.style.color = "";
+                        });
+                        this.style.backgroundColor = "#007bff";
+                        this.style.color = "#ffffff";
+                        
+                        // 3秒后恢复原样
+                        setTimeout(() => {
+                            this.style.backgroundColor = "";
+                            this.style.color = "";
+                        }, 3000);
+                    }
+                });
+            });
+
+            // Scroll to Top button logic
+            contentPanel.addEventListener("scroll", function() {
+                if (contentPanel.scrollTop > 20) {
+                    scrollToTopBtn.style.display = "block";
+                } else {
+                    scrollToTopBtn.style.display = "none";
+                }
+            });
+
+            window.scrollToTop = function() {
+                contentPanel.scrollTo({
+                    top: 0, 
+                    behavior: "smooth" 
+                });
+            };
+
+            // 键盘快捷键支持
+            document.addEventListener("keydown", function(e) {
+                if (e.ctrlKey && e.key === "f") {
+                    e.preventDefault();
+                    navSearch.focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
