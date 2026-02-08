@@ -4,33 +4,554 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>书签大礼包 · Bookmark Collections</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
   <style>
+    :root {
+      --bg: #f8f6f3;
+      --card-bg: #fff;
+      --text: #1f2937;
+      --text-muted: #6b7280;
+      --accent: #0f766e;
+      --accent-hover: #0d5c56;
+      --border: #e5e7eb;
+      --shadow: 0 1px 3px rgba(0,0,0,.06);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,.08);
+    }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 720px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #1a1a1a; }
-    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-    .sub { color: #666; margin-bottom: 1.5rem; }
-    ul { list-style: none; padding: 0; margin: 0; }
-    li { margin: 0.5rem 0; }
-    a { color: #0969da; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    body {
+      font-family: "Noto Sans SC", system-ui, -apple-system, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+    /* ----- Header ----- */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 1.5rem 1.75rem;
+      box-shadow: var(--shadow);
+    }
+    header .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    header .header-left {
+      flex: 1;
+      min-width: 0;
+    }
+    header .header-right {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    header .github-star-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.6rem;
+      background: rgba(15, 118, 110, 0.06);
+      border: 1px solid rgba(15, 118, 110, 0.2);
+      border-radius: 8px;
+    }
+    header .github-star-wrap:hover {
+      background: rgba(15, 118, 110, 0.1);
+      border-color: var(--accent);
+    }
+    header .github-star-wrap a {
+      display: inline-block;
+      line-height: 0;
+    }
+    header .github-star-wrap a:hover {
+      opacity: 0.9;
+    }
+    header .github-star-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    header .github-star-wrap:hover .github-star-hint {
+      color: var(--accent);
+    }
+    @keyframes star-guide {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    header .github-star-wrap img {
+      animation: star-guide 2s ease-in-out infinite;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    header h1 i {
+      color: var(--accent);
+    }
+    header .sub {
+      margin: 0.35rem 0 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    /* ----- Main ----- */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+      width: 100%;
+    }
+    .intro {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .intro i {
+      color: var(--accent);
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.35rem;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s, border-color .2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      border-color: #c4d4d0;
+    }
+    .card > a.card-link {
+      color: inherit;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card > a.card-link:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .card-title i {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    .card:hover .card-title {
+      color: var(--accent-hover);
+    }
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+      flex: 1;
+    }
+    .card-actions {
+      margin-top: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .card-cta {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .card > a.card-link:hover .card-cta {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+    .card-cta i {
+      font-size: 0.75rem;
+    }
+    /* 下载下拉 */
+    .download-wrap {
+      position: relative;
+    }
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.6rem;
+      font-size: 0.8rem;
+      color: var(--accent);
+      background: rgba(15, 118, 110, 0.08);
+      border: 1px solid rgba(15, 118, 110, 0.25);
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .download-btn:hover {
+      background: rgba(15, 118, 110, 0.14);
+      border-color: var(--accent);
+    }
+    .download-btn i {
+      font-size: 0.8rem;
+    }
+    .download-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      bottom: 100%;
+      margin-bottom: 4px;
+      min-width: 200px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow-hover);
+      z-index: 10;
+      padding: 0.35rem 0;
+    }
+    .download-wrap.open .download-dropdown {
+      display: block;
+    }
+    .download-dropdown a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .download-dropdown a:hover {
+      background: var(--bg);
+      color: var(--accent);
+    }
+    .download-dropdown a i {
+      width: 1.1em;
+      color: var(--text-muted);
+    }
+    /* ----- Footer ----- */
+    footer {
+      background: var(--card-bg);
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      margin-top: auto;
+      box-shadow: 0 -1px 3px rgba(0,0,0,.04);
+    }
+    footer .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    footer .links {
+      margin-bottom: 0.5rem;
+    }
+    footer .links a + a {
+      margin-left: 1rem;
+    }
+    footer .note {
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
   </style>
 </head>
 <body>
-  <h1>书签大礼包 · Bookmark Collections</h1>
-  <p class="sub">将浏览器书签转换为易读、可分享的页面。点击下方链接进入各专题（增强版，带左侧导航与搜索）。</p>
-  <ul>
-    <li><a href="在线工具-大礼包/在线工具-大礼包_tree.html">在线工具-大礼包</a></li>
-    <li><a href="在线设计-大礼包/在线设计-大礼包_tree.html">在线设计-大礼包</a></li>
-    <li><a href="学习-大礼包/学习-大礼包_tree.html">学习-大礼包</a></li>
-    <li><a href="工作-大礼包/工作-大礼包_tree.html">工作-大礼包</a></li>
-    <li><a href="在线办公-大礼包/在线办公-大礼包_tree.html">在线办公-大礼包</a></li>
-    <li><a href="文库学术-大礼包/文库学术-大礼包_tree.html">文库学术-大礼包</a></li>
-    <li><a href="资源探索-大礼包/资源探索大礼包_tree.html">资源探索-大礼包</a></li>
-    <li><a href="云盘磁力-大礼包/云盘磁力-大礼包_tree.html">云盘磁力-大礼包</a></li>
-    <li><a href="娱乐休闲-大礼包/娱乐休闲大礼包_tree.html">娱乐休闲-大礼包</a></li>
-    <li><a href="软件-大礼包/软件大礼包_tree.html">软件-大礼包</a></li>
-    <li><a href="无知资源书签-大礼包/无知资源书签20241201_tree.html">无知资源书签-大礼包</a></li>
-  </ul>
-  <p class="sub"><a href="https://github.com/rockyflux/Bookmarks">GitHub 仓库</a> · 导入书签请使用各目录下的 <code>*-大礼包.html</code></p>
+  <header>
+    <div class="wrap">
+      <div class="header-left">
+        <h1><i class="fa-solid fa-bookmark"></i> 书签大礼包 · Bookmark Collections</h1>
+        <p class="sub"><i class="fa-solid fa-circle-info"></i> 按主题汇总高质量网站、工具与学习资料，一键打开增强版页面（左侧导航 + 搜索）。</p>
+      </div>
+      <div class="header-right">
+        <div class="github-star-wrap">
+          <span class="github-star-hint">给个 Star 呗</span>
+          <a href="https://github.com/rockyflux/Bookmarks" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 上给本项目加星">
+            <img src="https://img.shields.io/github/stars/rockyflux/Bookmarks?style=flat-square" alt="GitHub Stars">
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <p class="intro"><i class="fa-solid fa-lightbulb"></i> 点击下方卡片进入对应专题，导入书签请使用各目录下的 <code>*-大礼包.html</code> 文件。</p>
+    <div class="card-grid">
+      <article class="card" data-html="在线工具-大礼包/在线工具-大礼包.html" data-top="在线工具-大礼包/在线工具-大礼包_top.html" data-tree="在线工具-大礼包/在线工具-大礼包_tree.html" data-md="在线工具-大礼包/在线工具-大礼包.md">
+        <a class="card-link" href="在线工具-大礼包/在线工具-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-wrench"></i> 在线工具-大礼包</h2>
+          <p class="card-desc">格式转换、下载/上传、图片/音视频处理、PDF、AI 助手等，临时需求即开即用，免安装。</p>
+        </a>
+        <div class="card-actions">
+          <a href="在线工具-大礼包/在线工具-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="在线工具-大礼包/在线工具-大礼包.html" download="在线工具-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="在线工具-大礼包/在线工具-大礼包_top.html" download="在线工具-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="在线工具-大礼包/在线工具-大礼包_tree.html" download="在线工具-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="在线工具-大礼包/在线工具-大礼包.md" download="在线工具-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="在线设计-大礼包/在线设计-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-palette"></i> 在线设计-大礼包</h2>
+          <p class="card-desc">配色、图标、插画、素材、排版、Mockup、UI 组件库与灵感来源，加速设计产出。</p>
+        </a>
+        <div class="card-actions">
+          <a href="在线设计-大礼包/在线设计-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="在线设计-大礼包/在线设计-大礼包.html" download="在线设计-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="在线设计-大礼包/在线设计-大礼包_top.html" download="在线设计-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="在线设计-大礼包/在线设计-大礼包_tree.html" download="在线设计-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="在线设计-大礼包/在线设计-大礼包.md" download="在线设计-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="学习-大礼包/学习-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-graduation-cap"></i> 学习-大礼包</h2>
+          <p class="card-desc">MOOC、教程、电子书、题库、编程/数据科学/外语等，构建系统化学习路径。</p>
+        </a>
+        <div class="card-actions">
+          <a href="学习-大礼包/学习-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="学习-大礼包/学习-大礼包.html" download="学习-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="学习-大礼包/学习-大礼包_top.html" download="学习-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="学习-大礼包/学习-大礼包_tree.html" download="学习-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="学习-大礼包/学习-大礼包.md" download="学习-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="工作-大礼包/工作-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-briefcase"></i> 工作-大礼包</h2>
+          <p class="card-desc">协同办公、项目管理、效率提升、自动化、远程办公工具与技巧，提升生产力。</p>
+        </a>
+        <div class="card-actions">
+          <a href="工作-大礼包/工作-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="工作-大礼包/工作-大礼包.html" download="工作-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="工作-大礼包/工作-大礼包_top.html" download="工作-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="工作-大礼包/工作-大礼包_tree.html" download="工作-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="工作-大礼包/工作-大礼包.md" download="工作-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="在线办公-大礼包/在线办公-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-building"></i> 在线办公-大礼包</h2>
+          <p class="card-desc">在线办公与协作相关工具与资源合集。</p>
+        </a>
+        <div class="card-actions">
+          <a href="在线办公-大礼包/在线办公-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="在线办公-大礼包/在线办公-大礼包.html" download="在线办公-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="在线办公-大礼包/在线办公-大礼包_top.html" download="在线办公-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="在线办公-大礼包/在线办公-大礼包_tree.html" download="在线办公-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="在线办公-大礼包/在线办公-大礼包.md" download="在线办公-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="文库学术-大礼包/文库学术-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-book"></i> 文库学术-大礼包</h2>
+          <p class="card-desc">论文检索、期刊索引、学术搜索、文献管理、写作与排版，支撑科研与写作场景。</p>
+        </a>
+        <div class="card-actions">
+          <a href="文库学术-大礼包/文库学术-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="文库学术-大礼包/文库学术-大礼包.html" download="文库学术-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="文库学术-大礼包/文库学术-大礼包_top.html" download="文库学术-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="文库学术-大礼包/文库学术-大礼包_tree.html" download="文库学术-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="文库学术-大礼包/文库学术-大礼包.md" download="文库学术-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="资源探索-大礼包/资源探索大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-compass"></i> 资源探索-大礼包</h2>
+          <p class="card-desc">垂直社区、导航站、精选仓库与优质信息源，拓展信息半径，降低找资源成本。</p>
+        </a>
+        <div class="card-actions">
+          <a href="资源探索-大礼包/资源探索大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="资源探索-大礼包/资源探索大礼包.html" download="资源探索大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="资源探索-大礼包/资源探索大礼包_top.html" download="资源探索大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="资源探索-大礼包/资源探索大礼包_tree.html" download="资源探索大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="资源探索-大礼包/资源探索大礼包.md" download="资源探索大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="云盘磁力-大礼包/云盘磁力-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-cloud"></i> 云盘磁力-大礼包</h2>
+          <p class="card-desc">常用网盘/资源入口与工具合集，统一入口便于检索与管理（请合法、合规使用）。</p>
+        </a>
+        <div class="card-actions">
+          <a href="云盘磁力-大礼包/云盘磁力-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="云盘磁力-大礼包/云盘磁力-大礼包.html" download="云盘磁力-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="云盘磁力-大礼包/云盘磁力-大礼包_top.html" download="云盘磁力-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="云盘磁力-大礼包/云盘磁力-大礼包_tree.html" download="云盘磁力-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="云盘磁力-大礼包/云盘磁力-大礼包.md" download="云盘磁力-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="娱乐休闲-大礼包/娱乐休闲大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-gamepad"></i> 娱乐休闲-大礼包</h2>
+          <p class="card-desc">音乐、影视、游戏、电子书与兴趣社区入口，适度放松、灵感触发。</p>
+        </a>
+        <div class="card-actions">
+          <a href="娱乐休闲-大礼包/娱乐休闲大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="娱乐休闲-大礼包/娱乐休闲大礼包.html" download="娱乐休闲大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="娱乐休闲-大礼包/娱乐休闲大礼包_top.html" download="娱乐休闲大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="娱乐休闲-大礼包/娱乐休闲大礼包_tree.html" download="娱乐休闲大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="娱乐休闲-大礼包/娱乐休闲大礼包.md" download="娱乐休闲大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="软件-大礼包/软件大礼包_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-laptop"></i> 软件-大礼包</h2>
+          <p class="card-desc">软件下载、工具软件、系统工具、开发工具等入口，便于查找与快速获取。</p>
+        </a>
+        <div class="card-actions">
+          <a href="软件-大礼包/软件大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="软件-大礼包/软件大礼包.html" download="软件大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="软件-大礼包/软件大礼包_top.html" download="软件大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="软件-大礼包/软件大礼包_tree.html" download="软件大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="软件-大礼包/软件大礼包.md" download="软件大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="card">
+        <a class="card-link" href="无知资源书签-大礼包/无知资源书签20241201_tree.html" target="_blank" rel="noopener noreferrer">
+          <h2 class="card-title"><i class="fa-solid fa-layer-group"></i> 无知资源书签-大礼包</h2>
+          <p class="card-desc">长期积累的综合性高频书签清单，覆盖广、密度高，万能备用工具箱。</p>
+        </a>
+        <div class="card-actions">
+          <a href="无知资源书签-大礼包/无知资源书签20241201_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <div class="download-wrap">
+            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
+            <div class="download-dropdown">
+              <a href="无知资源书签-大礼包/无知资源书签20241201.html" download="无知资源书签20241201.html"><i class="fa-solid fa-file-import"></i> 书签 HTML（导入浏览器）</a>
+              <a href="无知资源书签-大礼包/无知资源书签20241201_top.html" download="无知资源书签20241201_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
+              <a href="无知资源书签-大礼包/无知资源书签20241201_tree.html" download="无知资源书签20241201_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
+              <a href="无知资源书签-大礼包/无知资源书签20241201.md" download="无知资源书签20241201.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="links">
+        <a href="https://github.com/rockyflux/Bookmarks" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i> GitHub 仓库</a>
+        <a href="README.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-lines"></i> README</a>
+      </div>
+      <div class="note"><i class="fa-solid fa-bookmark"></i> 导入书签请使用各目录下的 <code>*-大礼包.html</code>；Chrome/Edge：书签管理器 → 导入书签。</div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      document.querySelectorAll('.download-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var wrap = this.closest('.download-wrap');
+          var open = wrap.classList.contains('open');
+          document.querySelectorAll('.download-wrap').forEach(function(w) { w.classList.remove('open'); });
+          if (!open) wrap.classList.add('open');
+        });
+      });
+      document.addEventListener('click', function() {
+        document.querySelectorAll('.download-wrap').forEach(function(w) { w.classList.remove('open'); });
+      });
+      document.querySelectorAll('.download-dropdown').forEach(function(dd) {
+        dd.addEventListener('click', function(e) { e.stopPropagation(); });
+      });
+    })();
+  </script>
 </body>
 </html>
