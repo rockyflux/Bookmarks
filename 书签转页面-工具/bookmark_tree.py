@@ -56,6 +56,12 @@ def parse_bookmark_html(html_content):
     nav_html += '</ul>'
     
     # 生成内容HTML
+    def anchor_text(link_text, link_url):
+        """javascript/data 等长 URL 用标题显示，避免页面冗长"""
+        if link_url.startswith(('javascript:', 'data:')):
+            return link_text
+        return link_url
+
     content_html = ''
     for cat in categories:
         anchor_id = re.sub(r'[^\w\u4e00-\u9fff]', '', cat["title"])
@@ -63,7 +69,8 @@ def parse_bookmark_html(html_content):
         if cat['links']:
             content_html += '<ol>'
             for link_text, link_url in cat['links']:
-                content_html += f'<li>{link_text}：<a href="{link_url}" target="_blank">{link_url}</a></li>'
+                disp = anchor_text(link_text, link_url)
+                content_html += f'<li>{link_text}：<a href="{link_url}" target="_blank">{disp}</a></li>'
             content_html += '</ol>'
 
     # 构建完整的HTML

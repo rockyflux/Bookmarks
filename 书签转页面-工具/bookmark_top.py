@@ -116,7 +116,9 @@ def parse_bookmark_html(html_content):
         if cat['links']:
             result_html.append('<ol>')
             for link_text, link_url in cat['links']:
-                result_html.append(f'<li>{link_text}：<a href="{link_url}" target="_blank">{link_url}</a></li>')
+                # javascript/data 等长 URL 用标题显示，避免页面冗长
+                disp = link_text if link_url.startswith(('javascript:', 'data:')) else link_url
+                result_html.append(f'<li>{link_text}：<a href="{link_url}" target="_blank">{disp}</a></li>')
             result_html.append('</ol>')
     
     result_html.append('</body>')
