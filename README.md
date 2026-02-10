@@ -4,7 +4,9 @@
 
 **在线访问：** [https://rockyflux.github.io/Bookmarks/](https://rockyflux.github.io/Bookmarks/)
 
-![images.jpeg](https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEQ1UppiuSmDCuo8sQXykABcyzrSNmuqgAC3h4AAplwWFQUY9e4VTgSJToE.jpeg)
+
+![屏幕截图_10-2-2026_155525_rockyflux github io](https://github.com/user-attachments/assets/1d18823c-2a71-47b8-a734-f56f959bc8d4)
+
 
 ## 目录结构
 
