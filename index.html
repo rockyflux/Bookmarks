@@ -7,568 +7,877 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #f8f6f3;
-      --card-bg: #fff;
-      --text: #1f2937;
-      --text-muted: #6b7280;
-      --accent: #0f766e;
-      --accent-hover: #0d5c56;
-      --border: #e5e7eb;
-      --shadow: 0 1px 3px rgba(0,0,0,.06);
-      --shadow-hover: 0 4px 12px rgba(0,0,0,.08);
+      --bg: #e8f0ea;
+      --bg-deep: #d4e3d8;
+      --panel: #0d2818;
+      --panel-text: #e7f2ea;
+      --panel-muted: #9bb5a4;
+      --ink: #102418;
+      --muted: #4a6354;
+      --line: rgba(13, 40, 24, 0.14);
+      --flare: #ff5a1f;
+      --flare-ink: #fff7f2;
+      --row: rgba(255, 255, 255, 0.55);
+      --row-hover: #fff;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --font: "Noto Sans SC", "Space Grotesk", system-ui, sans-serif;
+      --font-latin: "Space Grotesk", "Noto Sans SC", sans-serif;
     }
+
     * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
     body {
-      font-family: "Noto Sans SC", system-ui, -apple-system, sans-serif;
-      margin: 0;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(900px 500px at 100% 0%, rgba(255, 90, 31, 0.12), transparent 55%),
+        linear-gradient(135deg, var(--bg) 0%, #f4faf5 45%, var(--bg-deep) 100%);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    a { color: inherit; }
+    code {
+      font-size: 0.88em;
+      padding: 0.08em 0.32em;
+      border-radius: 4px;
+      background: rgba(13, 40, 24, 0.08);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 34vw) minmax(0, 1fr);
       min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+    }
+
+    /* ----- Brand rail ----- */
+    .rail {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: clamp(1.5rem, 3vw, 2.75rem);
+      background:
+        linear-gradient(165deg, #123222 0%, var(--panel) 55%, #081810 100%);
+      color: var(--panel-text);
       display: flex;
       flex-direction: column;
-    }
-    /* ----- Header ----- */
-    header {
-      background: var(--card-bg);
-      border-bottom: 1px solid var(--border);
-      padding: 1.5rem 1.5rem 1.75rem;
-      box-shadow: var(--shadow);
-    }
-    header .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      flex-wrap: wrap;
+      overflow: hidden;
+      isolation: isolate;
     }
-    header .header-left {
-      flex: 1;
-      min-width: 0;
+    .rail::before {
+      content: "";
+      position: absolute;
+      inset: auto -20% -30% -40%;
+      height: 70%;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(255, 90, 31, 0.35), transparent 45%),
+        radial-gradient(circle at 70% 70%, rgba(120, 200, 160, 0.18), transparent 50%);
+      z-index: -1;
+      pointer-events: none;
     }
-    header .header-right {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    .rail::after {
+      content: "BOOKMARK";
+      position: absolute;
+      right: -0.4rem;
+      bottom: 4.5rem;
+      writing-mode: vertical-rl;
+      font-family: var(--font-latin);
+      font-weight: 700;
+      font-size: clamp(3.5rem, 8vw, 6.5rem);
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.04);
+      pointer-events: none;
+      z-index: -1;
+      user-select: none;
     }
-    header .github-star-wrap {
+
+    .rail-top { display: grid; gap: 1.75rem; }
+    .pill {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.35rem 0.6rem;
-      background: rgba(15, 118, 110, 0.06);
-      border: 1px solid rgba(15, 118, 110, 0.2);
-      border-radius: 8px;
+      gap: 0.45rem;
+      width: fit-content;
+      padding: 0.35rem 0.7rem;
+      border: 1px solid rgba(231, 242, 234, 0.22);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--panel-muted);
+      font-family: var(--font-latin);
+      font-weight: 600;
     }
-    header .github-star-wrap:hover {
-      background: rgba(15, 118, 110, 0.1);
-      border-color: var(--accent);
+    .pill i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--flare);
+      box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.25);
     }
-    header .github-star-wrap a {
-      display: inline-block;
-      line-height: 0;
+
+    .rail h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 4.8vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      text-wrap: balance;
     }
-    header .github-star-wrap a:hover {
+    .rail h1 em {
+      display: block;
+      margin-top: 0.45rem;
+      font-family: var(--font-latin);
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.36em;
+      letter-spacing: 0.02em;
+      color: var(--panel-muted);
+      text-transform: uppercase;
+    }
+
+    .rail-lead {
+      margin: 0;
+      max-width: 22ch;
+      font-size: 0.98rem;
+      color: var(--panel-muted);
+      text-wrap: pretty;
+    }
+
+    .rail-stats {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: 1rem 1.75rem;
+      width: fit-content;
+      padding-top: 0.25rem;
+    }
+    .stat strong {
+      display: block;
+      font-family: var(--font-latin);
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+    }
+    .stat span {
+      font-size: 0.75rem;
+      color: var(--panel-muted);
+    }
+
+    .rail-bottom {
+      display: grid;
+      gap: 0.85rem;
+      padding-top: 2rem;
+    }
+    .star-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      text-decoration: none;
+      color: var(--panel-text);
+      transition: background 180ms var(--ease), transform 140ms var(--ease), border-color 180ms var(--ease);
+    }
+    .star-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 90, 31, 0.45);
+    }
+    .star-btn:active { transform: scale(0.97); }
+    .star-btn:focus-visible {
+      outline: 2px solid var(--flare);
+      outline-offset: 3px;
+    }
+    .star-btn b {
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .star-btn img { display: block; height: 20px; }
+    .rail-note {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--panel-muted);
       opacity: 0.9;
     }
-    header .github-star-hint {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      white-space: nowrap;
+
+    /* ----- Strip ----- */
+    .strip {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
     }
-    header .github-star-wrap:hover .github-star-hint {
-      color: var(--accent);
+
+    .strip-head {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem clamp(1.1rem, 2.5vw, 2rem);
+      background: color-mix(in srgb, var(--bg) 82%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
     }
-    @keyframes star-guide {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-    }
-    header .github-star-wrap img {
-      animation: star-guide 2s ease-in-out infinite;
-    }
-    header h1 {
+    .strip-head h2 {
       margin: 0;
-      font-size: 1.5rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-family: var(--font-latin);
+      color: var(--muted);
+    }
+    .strip-head p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .lanes {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    header h1 i {
-      color: var(--accent);
-    }
-    header .sub {
-      margin: 0.35rem 0 0;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      font-weight: 400;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-    /* ----- Main ----- */
-    main {
+      flex-direction: column;
+      padding: 0.35rem clamp(0.85rem, 2vw, 1.5rem) 1.5rem;
+      gap: 0.55rem;
       flex: 1;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 3rem;
-      width: 100%;
     }
-    .intro {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-bottom: 1.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .intro i {
-      color: var(--accent);
-    }
-    .card-grid {
+
+    .lane {
+      --tone: #1b4332;
+      position: relative;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.85rem 1.1rem;
+      align-items: center;
+      padding: 1.05rem 1.15rem;
+      background: var(--row);
+      border: 1px solid transparent;
+      border-radius: 16px;
+      transition:
+        background 200ms var(--ease),
+        border-color 200ms var(--ease),
+        transform 200ms var(--ease),
+        box-shadow 220ms var(--ease);
+      opacity: 0;
+      transform: translateX(18px);
+      animation: slide-in 480ms var(--ease) forwards;
+      z-index: 0;
     }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.25rem 1.35rem;
-      box-shadow: var(--shadow);
-      transition: box-shadow .2s, border-color .2s;
+    .lane:has(.download-wrap.open) {
+      z-index: 30;
+    }
+    .lane:nth-child(1) { animation-delay: 30ms; --tone: #ff5a1f; }
+    .lane:nth-child(2) { animation-delay: 60ms; --tone: #2a9d8f; }
+    .lane:nth-child(3) { animation-delay: 90ms; --tone: #3d5a80; }
+    .lane:nth-child(4) { animation-delay: 120ms; --tone: #6a994e; }
+    .lane:nth-child(5) { animation-delay: 150ms; --tone: #bc4749; }
+    .lane:nth-child(6) { animation-delay: 180ms; --tone: #386641; }
+    .lane:nth-child(7) { animation-delay: 210ms; --tone: #0077b6; }
+    .lane:nth-child(8) { animation-delay: 240ms; --tone: #7f5539; }
+    .lane:nth-child(9) { animation-delay: 270ms; --tone: #e09f3e; }
+    .lane:nth-child(10) { animation-delay: 300ms; --tone: #1d3557; }
+    .lane:nth-child(11) { animation-delay: 330ms; --tone: #9b2226; }
+    .lane:nth-child(12) { animation-delay: 360ms; --tone: #588157; }
+
+    @keyframes slide-in {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .lane::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: var(--tone);
+      opacity: 0.9;
+      border-radius: 16px 0 0 16px;
+    }
+
+    @media (hover: hover) {
+      .lane:hover {
+        background: var(--row-hover);
+        border-color: color-mix(in srgb, var(--tone) 28%, transparent);
+        box-shadow: 0 10px 28px rgba(13, 40, 24, 0.08);
+        transform: translateX(4px);
+      }
+    }
+
+    .lane-no {
+      font-family: var(--font-latin);
+      font-weight: 700;
+      font-size: 1.35rem;
+      letter-spacing: -0.04em;
+      color: color-mix(in srgb, var(--tone) 75%, var(--ink));
+      font-variant-numeric: tabular-nums;
+      min-width: 2.2ch;
+      line-height: 1;
+      padding-left: 0.35rem;
+    }
+
+    .lane-body { min-width: 0; }
+    .lane-title {
+      margin: 0;
+      font-size: 1.12rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.25;
       display: flex;
-      flex-direction: column;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.45rem;
     }
-    .card:hover {
-      box-shadow: var(--shadow-hover);
-      border-color: #c4d4d0;
-    }
-    .card > a.card-link {
-      color: inherit;
+    .lane-title a {
       text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
     }
-    .card > a.card-link:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
+    .lane-count {
+      font-family: var(--font-latin);
+      font-size: 0.72rem;
+      font-weight: 650;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+      background: rgba(13, 40, 24, 0.06);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.12rem 0.5rem;
+      white-space: nowrap;
+      line-height: 1.4;
     }
-    .card-title {
-      font-weight: 600;
-      font-size: 1.05rem;
-      margin: 0 0 0.5rem;
-      color: var(--accent);
+    .lane-title a:focus-visible {
+      outline: 2px solid var(--flare);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    .lane-desc {
+      margin: 0.28rem 0 0;
+      font-size: 0.84rem;
+      color: var(--muted);
+      text-wrap: pretty;
+      max-width: 52ch;
+    }
+
+    .lane-actions {
       display: flex;
       align-items: center;
       gap: 0.45rem;
+      flex-shrink: 0;
     }
-    .card-title i {
-      font-size: 1rem;
-      opacity: 0.9;
-    }
-    .card:hover .card-title {
-      color: var(--accent-hover);
-    }
-    .card-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin: 0;
-      flex: 1;
-    }
-    .card-actions {
-      margin-top: 0.85rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .card-cta {
-      font-size: 0.8rem;
-      color: var(--accent);
-      font-weight: 500;
+
+    .go {
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.4rem;
+      min-height: 40px;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--panel-text);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 650;
+      transition: background 160ms var(--ease), transform 140ms var(--ease);
+      white-space: nowrap;
     }
-    .card > a.card-link:hover .card-cta {
-      color: var(--accent-hover);
-      text-decoration: underline;
+    .go:hover { background: #163526; }
+    .go:active { transform: scale(0.96); }
+    .go:focus-visible {
+      outline: 2px solid var(--flare);
+      outline-offset: 2px;
     }
-    .card-cta i {
-      font-size: 0.75rem;
+    .go svg {
+      width: 12px;
+      height: 12px;
+      transition: transform 180ms var(--ease);
     }
-    /* 下载下拉 */
-    .download-wrap {
-      position: relative;
+    @media (hover: hover) {
+      .lane:hover .go svg { transform: translate(1px, -1px); }
     }
+
+    .download-wrap { position: relative; }
     .download-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.35rem 0.6rem;
-      font-size: 0.8rem;
-      color: var(--accent);
-      background: rgba(15, 118, 110, 0.08);
-      border: 1px solid rgba(15, 118, 110, 0.25);
-      border-radius: 6px;
-      cursor: pointer;
+      justify-content: center;
+      gap: 0.3rem;
+      min-height: 40px;
+      min-width: 40px;
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--ink);
       font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 160ms var(--ease), background 160ms var(--ease), transform 140ms var(--ease);
     }
     .download-btn:hover {
-      background: rgba(15, 118, 110, 0.14);
-      border-color: var(--accent);
+      border-color: color-mix(in srgb, var(--tone) 40%, var(--line));
+      background: #fff;
     }
-    .download-btn i {
-      font-size: 0.8rem;
+    .download-btn:active { transform: scale(0.96); }
+    .download-btn:focus-visible {
+      outline: 2px solid var(--flare);
+      outline-offset: 2px;
     }
+    .download-btn svg { width: 14px; height: 14px; opacity: 0.8; }
+
     .download-dropdown {
       display: none;
       position: absolute;
       right: 0;
-      bottom: 100%;
-      margin-bottom: 4px;
-      min-width: 200px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      box-shadow: var(--shadow-hover);
-      z-index: 10;
-      padding: 0.35rem 0;
+      top: calc(100% + 8px);
+      min-width: 230px;
+      padding: 0.4rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 16px 40px rgba(13, 40, 24, 0.14);
+      z-index: 40;
+      transform-origin: top right;
+      animation: pop 170ms var(--ease);
     }
-    .download-wrap.open .download-dropdown {
-      display: block;
+    .download-wrap.open .download-dropdown { display: block; }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+      to { opacity: 1; transform: none; }
     }
     .download-dropdown a {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 0.85rem;
-      font-size: 0.85rem;
-      color: var(--text);
+      gap: 0.55rem;
+      padding: 0.58rem 0.7rem;
+      border-radius: 10px;
       text-decoration: none;
+      font-size: 0.82rem;
+      color: var(--ink);
     }
     .download-dropdown a:hover {
       background: var(--bg);
-      color: var(--accent);
+      color: #8a2e0a;
     }
-    .download-dropdown a i {
-      width: 1.1em;
-      color: var(--text-muted);
+    .download-dropdown .tag {
+      font-family: var(--font-latin);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      min-width: 1.6rem;
     }
-    /* ----- Footer ----- */
-    footer {
-      background: var(--card-bg);
-      border-top: 1px solid var(--border);
-      padding: 1.25rem 1.5rem;
+
+    .strip-foot {
       margin-top: auto;
-      box-shadow: 0 -1px 3px rgba(0,0,0,.04);
-    }
-    footer .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-    footer a:hover {
-      text-decoration: underline;
-    }
-    footer .links {
-      margin-bottom: 0.5rem;
-    }
-    footer .links a + a {
-      margin-left: 1rem;
-    }
-    footer .note {
+      padding: 1.1rem clamp(1.1rem, 2.5vw, 2rem) 1.5rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+      align-items: baseline;
+      justify-content: space-between;
+      color: var(--muted);
       font-size: 0.8rem;
-      margin-top: 0.5rem;
+    }
+    .strip-foot nav {
+      display: flex;
+      gap: 1rem;
+    }
+    .strip-foot a {
+      color: var(--ink);
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .strip-foot a:hover {
+      color: var(--flare);
+      border-bottom-color: color-mix(in srgb, var(--flare) 45%, transparent);
+    }
+
+    @media (max-width: 920px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .rail {
+        position: relative;
+        height: auto;
+        min-height: auto;
+        padding-bottom: 2rem;
+      }
+      .rail::after { display: none; }
+      .rail-lead { max-width: 42ch; }
+      .lane {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+      .lane-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+        padding-left: 0.35rem;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .strip-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .go span.label { display: none; }
+      .download-btn .label { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .lane {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+      .download-dropdown { animation: none; }
+      .lane, .go, .go svg, .download-btn, .star-btn {
+        transition: none !important;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <div class="header-left">
-        <h1><i class="fa-solid fa-bookmark"></i> 书签大礼包 · Bookmark Collections</h1>
-        <p class="sub"><i class="fa-solid fa-circle-info"></i> 按主题汇总高质量网站、工具与学习资料，一键打开增强版页面（左侧导航 + 搜索）。</p>
-      </div>
-      <div class="header-right">
-        <div class="github-star-wrap">
-          <span class="github-star-hint">给个 Star 呗</span>
-          <a href="https://github.com/rockyflux/Bookmarks" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 上给本项目加星">
-            <img src="https://img.shields.io/github/stars/rockyflux/Bookmarks?style=flat-square" alt="GitHub Stars">
-          </a>
+  <div class="layout">
+    <aside class="rail" aria-label="品牌与说明">
+      <div class="rail-top">
+        <div class="pill"><i aria-hidden="true"></i> Open collection</div>
+        <h1>
+          书签大礼包
+          <em>Bookmark Collections</em>
+        </h1>
+        <p class="rail-lead">按主题打包的网站与工具索引。在线浏览，或下载后导入浏览器。</p>
+        <div class="rail-stats">
+          <div class="stat"><strong>12</strong><span>专题合集</span></div>
+          <div class="stat"><strong>3</strong><span>导出格式</span></div>
         </div>
       </div>
-    </div>
-  </header>
+      <div class="rail-bottom">
+        <a class="star-btn" href="https://github.com/rockyflux/Bookmarks" target="_blank" rel="noopener noreferrer">
+          <b>在 GitHub 点个 Star</b>
+          <img src="https://img.shields.io/github/stars/rockyflux/Bookmarks?style=flat-square" alt="GitHub Stars" width="88" height="20" />
+        </a>
+        <p class="rail-note">导入请用各专题目录下的源 HTML。Chrome / Edge：书签管理器 → 导入书签。</p>
+      </div>
+    </aside>
 
-  <main>
-    <p class="intro"><i class="fa-solid fa-lightbulb"></i> 点击下方卡片进入对应专题，导入书签请使用各目录下的 <code>*-大礼包.html</code> 文件。</p>
-    <div class="card-grid">
-      <article class="card" data-html="在线工具-大礼包/在线工具-大礼包.html" data-top="在线工具-大礼包/在线工具-大礼包_top.html" data-tree="在线工具-大礼包/在线工具-大礼包_tree.html" data-md="在线工具-大礼包/在线工具-大礼包.md">
-        <a class="card-link" href="在线工具-大礼包/在线工具-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-wrench"></i> 在线工具-大礼包</h2>
-          <p class="card-desc">格式转换、下载/上传、图片/音视频处理、PDF、AI 助手等，临时需求即开即用，免安装。</p>
-        </a>
-        <div class="card-actions">
-          <a href="在线工具-大礼包/在线工具-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="在线工具-大礼包/在线工具-大礼包.html" download="在线工具-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="在线工具-大礼包/在线工具-大礼包_top.html" download="在线工具-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="在线工具-大礼包/在线工具-大礼包_tree.html" download="在线工具-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="在线工具-大礼包/在线工具-大礼包.md" download="在线工具-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="在线设计-大礼包/在线设计-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-palette"></i> 在线设计-大礼包</h2>
-          <p class="card-desc">配色、图标、插画、素材、排版、Mockup、UI 组件库与灵感来源，加速设计产出。</p>
-        </a>
-        <div class="card-actions">
-          <a href="在线设计-大礼包/在线设计-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="在线设计-大礼包/在线设计-大礼包.html" download="在线设计-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="在线设计-大礼包/在线设计-大礼包_top.html" download="在线设计-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="在线设计-大礼包/在线设计-大礼包_tree.html" download="在线设计-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="在线设计-大礼包/在线设计-大礼包.md" download="在线设计-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="学习-大礼包/学习-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-graduation-cap"></i> 学习-大礼包</h2>
-          <p class="card-desc">MOOC、教程、电子书、题库、编程/数据科学/外语等，构建系统化学习路径。</p>
-        </a>
-        <div class="card-actions">
-          <a href="学习-大礼包/学习-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="学习-大礼包/学习-大礼包.html" download="学习-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="学习-大礼包/学习-大礼包_top.html" download="学习-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="学习-大礼包/学习-大礼包_tree.html" download="学习-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="学习-大礼包/学习-大礼包.md" download="学习-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="工作-大礼包/工作-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-briefcase"></i> 工作-大礼包</h2>
-          <p class="card-desc">协同办公、项目管理、效率提升、自动化、远程办公工具与技巧，提升生产力。</p>
-        </a>
-        <div class="card-actions">
-          <a href="工作-大礼包/工作-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="工作-大礼包/工作-大礼包.html" download="工作-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="工作-大礼包/工作-大礼包_top.html" download="工作-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="工作-大礼包/工作-大礼包_tree.html" download="工作-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="工作-大礼包/工作-大礼包.md" download="工作-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="在线办公-大礼包/在线办公-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-building"></i> 在线办公-大礼包</h2>
-          <p class="card-desc">在线办公与协作相关工具与资源合集。</p>
-        </a>
-        <div class="card-actions">
-          <a href="在线办公-大礼包/在线办公-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="在线办公-大礼包/在线办公-大礼包.html" download="在线办公-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="在线办公-大礼包/在线办公-大礼包_top.html" download="在线办公-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="在线办公-大礼包/在线办公-大礼包_tree.html" download="在线办公-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="在线办公-大礼包/在线办公-大礼包.md" download="在线办公-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="文库学术-大礼包/文库学术-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-book"></i> 文库学术-大礼包</h2>
-          <p class="card-desc">论文检索、期刊索引、学术搜索、文献管理、写作与排版，支撑科研与写作场景。</p>
-        </a>
-        <div class="card-actions">
-          <a href="文库学术-大礼包/文库学术-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="文库学术-大礼包/文库学术-大礼包.html" download="文库学术-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="文库学术-大礼包/文库学术-大礼包_top.html" download="文库学术-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="文库学术-大礼包/文库学术-大礼包_tree.html" download="文库学术-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="文库学术-大礼包/文库学术-大礼包.md" download="文库学术-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="资源探索-大礼包/资源探索大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-compass"></i> 资源探索-大礼包</h2>
-          <p class="card-desc">垂直社区、导航站、精选仓库与优质信息源，拓展信息半径，降低找资源成本。</p>
-        </a>
-        <div class="card-actions">
-          <a href="资源探索-大礼包/资源探索大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="资源探索-大礼包/资源探索大礼包.html" download="资源探索大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="资源探索-大礼包/资源探索大礼包_top.html" download="资源探索大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="资源探索-大礼包/资源探索大礼包_tree.html" download="资源探索大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="资源探索-大礼包/资源探索大礼包.md" download="资源探索大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="云盘磁力-大礼包/云盘磁力-大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-cloud"></i> 云盘磁力-大礼包</h2>
-          <p class="card-desc">常用网盘/资源入口与工具合集，统一入口便于检索与管理（请合法、合规使用）。</p>
-        </a>
-        <div class="card-actions">
-          <a href="云盘磁力-大礼包/云盘磁力-大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="云盘磁力-大礼包/云盘磁力-大礼包.html" download="云盘磁力-大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="云盘磁力-大礼包/云盘磁力-大礼包_top.html" download="云盘磁力-大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="云盘磁力-大礼包/云盘磁力-大礼包_tree.html" download="云盘磁力-大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="云盘磁力-大礼包/云盘磁力-大礼包.md" download="云盘磁力-大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="娱乐休闲-大礼包/娱乐休闲大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-gamepad"></i> 娱乐休闲-大礼包</h2>
-          <p class="card-desc">音乐、影视、游戏、电子书与兴趣社区入口，适度放松、灵感触发。</p>
-        </a>
-        <div class="card-actions">
-          <a href="娱乐休闲-大礼包/娱乐休闲大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="娱乐休闲-大礼包/娱乐休闲大礼包.html" download="娱乐休闲大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="娱乐休闲-大礼包/娱乐休闲大礼包_top.html" download="娱乐休闲大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="娱乐休闲-大礼包/娱乐休闲大礼包_tree.html" download="娱乐休闲大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="娱乐休闲-大礼包/娱乐休闲大礼包.md" download="娱乐休闲大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="软件-大礼包/软件大礼包_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-laptop"></i> 软件-大礼包</h2>
-          <p class="card-desc">软件下载、工具软件、系统工具、开发工具等入口，便于查找与快速获取。</p>
-        </a>
-        <div class="card-actions">
-          <a href="软件-大礼包/软件大礼包_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="软件-大礼包/软件大礼包.html" download="软件大礼包.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="软件-大礼包/软件大礼包_top.html" download="软件大礼包_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="软件-大礼包/软件大礼包_tree.html" download="软件大礼包_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="软件-大礼包/软件大礼包.md" download="软件大礼包.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="无知资源书签-大礼包/无知资源书签20250605_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-layer-group"></i> 无知资源书签20250605</h2>
-          <p class="card-desc">长期积累的综合性高频书签清单，覆盖广、密度高，万能备用工具箱。</p>
-        </a>
-        <div class="card-actions">
-          <a href="无知资源书签-大礼包/无知资源书签20250605_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="无知资源书签-大礼包/无知资源书签20250605.html" download="无知资源书签20250605.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="无知资源书签-大礼包/无知资源书签20250605_top.html" download="无知资源书签20250605_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="无知资源书签-大礼包/无知资源书签20250605_tree.html" download="无知资源书签20250605_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="无知资源书签-大礼包/无知资源书签20250605.md" download="无知资源书签20250605.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card">
-        <a class="card-link" href="奶酪书签-大礼包/奶酪书签_tree.html" target="_blank" rel="noopener noreferrer">
-          <h2 class="card-title"><i class="fa-solid fa-cheese"></i> 奶酪书签-大礼包</h2>
-          <p class="card-desc">奶酪出品的精选书签合集，优质网站与工具导航。</p>
-        </a>
-        <div class="card-actions">
-          <a href="奶酪书签-大礼包/奶酪书签_tree.html" target="_blank" rel="noopener noreferrer" class="card-cta">进入专题 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <div class="download-wrap">
-            <button type="button" class="download-btn"><i class="fa-solid fa-download"></i> 下载</button>
-            <div class="download-dropdown">
-              <a href="奶酪书签-大礼包/奶酪书签.html" download="奶酪书签.html"><i class="fa-solid fa-file-import"></i> 书签 HTML(导入浏览器)</a>
-              <a href="奶酪书签-大礼包/奶酪书签_top.html" download="奶酪书签_top.html"><i class="fa-solid fa-file-lines"></i> 简洁版 HTML</a>
-              <a href="奶酪书签-大礼包/奶酪书签_tree.html" download="奶酪书签_tree.html"><i class="fa-solid fa-sitemap"></i> 增强版 HTML</a>
-              <a href="奶酪书签-大礼包/奶酪书签.md" download="奶酪书签.md"><i class="fa-brands fa-markdown"></i> Markdown</a>
-            </div>
-          </div>
-        </div>
-      </article>
-    </div>
-  </main>
-
-  <footer>
-    <div class="wrap">
-      <div class="links">
-        <a href="https://github.com/rockyflux/Bookmarks" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i> GitHub 仓库</a>
-        <a href="README.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-lines"></i> README</a>
+    <section class="strip" aria-label="专题列表">
+      <div class="strip-head">
+        <h2>Packs</h2>
+        <p>点标题或「打开」进入在线版</p>
       </div>
-      <div class="note"><i class="fa-solid fa-bookmark"></i> 导入书签请使用各目录下的 <code>*-大礼包.html</code>；Chrome/Edge：书签管理器 → 导入书签。</div>
-    </div>
-  </footer>
+
+      <div class="lanes">
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">01</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/wuzhi.html" target="_blank" rel="noopener noreferrer">无知资源书签</a><span class="lane-count" title="50474 个网站">50,474 站</span></h3>
+            <p class="lane-desc">长期积累的综合性高频书签清单，覆盖广、密度高（20260903）。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/wuzhi.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载无知资源书签">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/无知资源书签/无知书签_20260903.html" download="无知书签_20260903.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/wuzhi.html" download="wuzhi.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/无知资源书签/无知书签_20260903.md" download="无知书签_20260903.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">02</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/cheese.html" target="_blank" rel="noopener noreferrer">奶酪书签</a><span class="lane-count" title="5283 个网站">5,283 站</span></h3>
+            <p class="lane-desc">奶酪出品的精选书签合集，优质网站与工具导航（20260506）。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/cheese.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载奶酪书签">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/奶酪书签/奶酪书签.html" download="奶酪书签.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/cheese.html" download="cheese.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/奶酪书签/奶酪书签.md" download="奶酪书签.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">03</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/software.html" target="_blank" rel="noopener noreferrer">软件</a><span class="lane-count" title="4727 个网站">4,727 站</span></h3>
+            <p class="lane-desc">软件下载、系统工具、开发工具等入口，集中查找与快速获取。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/software.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载软件">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/软件/软件.html" download="软件.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/software.html" download="software.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/软件/软件.md" download="软件.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">04</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/entertainment.html" target="_blank" rel="noopener noreferrer">娱乐休闲</a><span class="lane-count" title="4211 个网站">4,211 站</span></h3>
+            <p class="lane-desc">音乐、影视、游戏、电子书与兴趣社区，适度放松、触发灵感。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/entertainment.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载娱乐休闲">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/娱乐休闲/娱乐休闲.html" download="娱乐休闲.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/entertainment.html" download="entertainment.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/娱乐休闲/娱乐休闲.md" download="娱乐休闲.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">05</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/study.html" target="_blank" rel="noopener noreferrer">学习</a><span class="lane-count" title="2378 个网站">2,378 站</span></h3>
+            <p class="lane-desc">MOOC、教程、电子书、题库、编程与数据科学、外语，系统化学习路径。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/study.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载学习">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/学习/学习.html" download="学习.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/study.html" download="study.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/学习/学习.md" download="学习.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">06</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/tools.html" target="_blank" rel="noopener noreferrer">在线工具</a><span class="lane-count" title="1895 个网站">1,895 站</span></h3>
+            <p class="lane-desc">格式转换、下载上传、图片音视频、PDF、AI 助手。临时需求即开即用。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/tools.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载在线工具">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/在线工具/在线工具.html" download="在线工具.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/tools.html" download="tools.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/在线工具/在线工具.md" download="在线工具.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">07</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/cloud.html" target="_blank" rel="noopener noreferrer">云盘磁力</a><span class="lane-count" title="1298 个网站">1,298 站</span></h3>
+            <p class="lane-desc">常用网盘与资源入口合集，统一检索与管理（请合法合规使用）。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/cloud.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载云盘磁力">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/云盘磁力/云盘磁力.html" download="云盘磁力.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/cloud.html" download="cloud.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/云盘磁力/云盘磁力.md" download="云盘磁力.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">08</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/work.html" target="_blank" rel="noopener noreferrer">工作</a><span class="lane-count" title="880 个网站">880 站</span></h3>
+            <p class="lane-desc">协同办公、项目管理、效率与自动化、远程办公工具与技巧。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/work.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载工作">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/工作/工作.html" download="工作.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/work.html" download="work.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/工作/工作.md" download="工作.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">09</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/design.html" target="_blank" rel="noopener noreferrer">在线设计</a><span class="lane-count" title="612 个网站">612 站</span></h3>
+            <p class="lane-desc">配色、图标、插画、素材、排版、Mockup、UI 组件库与灵感来源。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/design.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载在线设计">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/在线设计/在线设计.html" download="在线设计.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/design.html" download="design.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/在线设计/在线设计.md" download="在线设计.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">10</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/office.html" target="_blank" rel="noopener noreferrer">在线办公</a><span class="lane-count" title="595 个网站">595 站</span></h3>
+            <p class="lane-desc">在线办公与协作相关工具与资源合集。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/office.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载在线办公">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/在线办公/在线办公.html" download="在线办公.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/office.html" download="office.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/在线办公/在线办公.md" download="在线办公.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">11</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/academic.html" target="_blank" rel="noopener noreferrer">文库学术</a><span class="lane-count" title="287 个网站">287 站</span></h3>
+            <p class="lane-desc">论文检索、期刊索引、学术搜索、文献管理、写作与排版。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/academic.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载文库学术">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/文库学术/文库学术.html" download="文库学术.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/academic.html" download="academic.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/文库学术/文库学术.md" download="文库学术.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="lane">
+          <div class="lane-no" aria-hidden="true">12</div>
+          <div class="lane-body">
+            <h3 class="lane-title"><a href="pages/explore.html" target="_blank" rel="noopener noreferrer">资源探索</a><span class="lane-count" title="225 个网站">225 站</span></h3>
+            <p class="lane-desc">垂直社区、导航站、精选仓库与优质信息源，拓展信息半径。</p>
+          </div>
+          <div class="lane-actions">
+            <a class="go" href="pages/explore.html" target="_blank" rel="noopener noreferrer"><span class="label">打开</span> <svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3.5 1.5h7v7h-1.5V4.06L2.78 10.28l-1.06-1.06L7.94 3H3.5z"/></svg></a>
+            <div class="download-wrap">
+              <button type="button" class="download-btn" aria-haspopup="true" aria-expanded="false" aria-label="下载资源探索">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 11.5 3.5 7l1.06-1.06L7.25 8.63V2h1.5v6.63l2.69-2.69L12.5 7 8 11.5zM3 13.5h10V12H3v1.5z"/></svg>
+                <span class="label">下载</span>
+              </button>
+              <div class="download-dropdown" role="menu">
+                <a href="packs/资源探索/资源探索.html" download="资源探索.html" role="menuitem"><span class="tag">HTML</span> 书签（导入浏览器）</a>
+                <a href="pages/explore.html" download="explore.html" role="menuitem"><span class="tag">WEB</span> 在线版页面</a>
+                <a href="packs/资源探索/资源探索.md" download="资源探索.md" role="menuitem"><span class="tag">MD</span> Markdown</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <footer class="strip-foot">
+        <nav>
+          <a href="https://github.com/rockyflux/Bookmarks" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="README.md" target="_blank" rel="noopener noreferrer">README</a>
+        </nav>
+        <span>源文件在 <code>packs/</code>，在线版在 <code>pages/</code></span>
+      </footer>
+    </section>
+  </div>
 
   <script>
-    (function() {
-      document.querySelectorAll('.download-btn').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
+    (function () {
+      function closeAll() {
+        document.querySelectorAll('.download-wrap').forEach(function (w) {
+          w.classList.remove('open');
+          var b = w.querySelector('.download-btn');
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+      }
+      document.querySelectorAll('.download-btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
           e.preventDefault();
           e.stopPropagation();
           var wrap = this.closest('.download-wrap');
           var open = wrap.classList.contains('open');
-          document.querySelectorAll('.download-wrap').forEach(function(w) { w.classList.remove('open'); });
-          if (!open) wrap.classList.add('open');
+          closeAll();
+          if (!open) {
+            wrap.classList.add('open');
+            this.setAttribute('aria-expanded', 'true');
+          }
         });
       });
-      document.addEventListener('click', function() {
-        document.querySelectorAll('.download-wrap').forEach(function(w) { w.classList.remove('open'); });
+      document.addEventListener('click', closeAll);
+      document.querySelectorAll('.download-dropdown').forEach(function (dd) {
+        dd.addEventListener('click', function (e) { e.stopPropagation(); });
       });
-      document.querySelectorAll('.download-dropdown').forEach(function(dd) {
-        dd.addEventListener('click', function(e) { e.stopPropagation(); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAll();
       });
     })();
   </script>
