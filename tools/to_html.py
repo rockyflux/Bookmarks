@@ -38,7 +38,7 @@ def parse_bookmark_html(html_content, page_title=None, home_href="../index.html"
         host = host_of(href)
         if not host:
             return ''
-        return f'https://icons.duckduckgo.com/ip3/{html_lib.escape(host)}.ico'
+        return f'https://ico.scdn.io/api/api/favicon.php?url={html_lib.escape(host)}'
 
     def slug(title):
         s = re.sub(r'[^\w\u4e00-\u9fff]', '', title)
